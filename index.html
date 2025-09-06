@@ -110,22 +110,22 @@
                 <div class="task-card flex flex-col items-center justify-center text-center">
                     <i data-lucide="monitor" class="w-10 h-10 text-blue-400 mb-2"></i>
                     <p class="font-bold text-lg mb-2">MoniTag আয়</p>
-                    <button class="task-button" onclick="showAlert('MoniTag আয় খুলুন')">খুলুন</button>
+                    <button class="task-button" onclick="handleTask('monitag')">খুলুন</button>
                 </div>
                 <div class="task-card flex flex-col items-center justify-center text-center">
                     <i data-lucide="coins" class="w-10 h-10 text-yellow-400 mb-2"></i>
                     <p class="font-bold text-lg mb-2">Gigapub আয়</p>
-                    <button class="task-button" onclick="showAlert('Gigapub আয় খুলুন')">খুলুন</button>
+                    <button class="task-button" onclick="handleTask('gigapub')">খুলুন</button>
                 </div>
                 <div class="task-card flex flex-col items-center justify-center text-center">
                     <i data-lucide="globe" class="w-10 h-10 text-green-400 mb-2"></i>
                     <p class="font-bold text-lg mb-2">ওয়েব ভিজিট</p>
-                    <button class="task-button" onclick="showAlert('ওয়েব ভিজিট খুলুন')">খুলুন</button>
+                    <button class="task-button" onclick="handleTask('webvisit')">খুলুন</button>
                 </div>
                 <div class="task-card flex flex-col items-center justify-center text-center">
                     <i data-lucide="send" class="w-10 h-10 text-purple-400 mb-2"></i>
                     <p class="font-bold text-lg mb-2">টেলিগ্রাম আয়</p>
-                    <button class="task-button" onclick="showAlert('টেলিগ্রাম আয় খুলুন')">খুলুন</button>
+                    <button class="task-button" onclick="handleTask('telegram')">খুলুন</button>
                 </div>
             </div>
 
@@ -142,7 +142,7 @@
                         <p class="font-bold">Watch Video Ad</p>
                         <p class="text-sm text-gray-400">Earn <span id="reward-interstitial-display">0</span> coins per ad view.</p>
                     </div>
-                    <button class="btn-accent px-4 py-1 rounded-lg text-sm" onclick="handleAdWatch()">Watch Ad</button>
+                    <button class="btn-accent px-4 py-1 rounded-lg text-sm" onclick="handleTask('video')">Watch Ad</button>
                 </div>
             </div>
         </div>
@@ -403,49 +403,67 @@
     }
 
     // Tasks & Ads
-    async function handleAdWatch() {
+    async function handleTask(taskType) {
         if (!userData || !appConfig) {
-            return showAlert("Ad not available. Please try again later.");
+            return showAlert("Task not available. Please try again later.");
         }
         
         loader.style.display = 'flex';
-        
-        const dailyLimit = appConfig.dailyAdLimit || 0;
-        if (userData.lastAdWatchDate !== today) {
-            userData.dailyAdCount = 0;
-            const userRef = doc(db, "users", userData.uid);
-            await updateDoc(userRef, { dailyAdCount: 0, lastAdWatchDate: today });
-        }
 
-        if ((userData.dailyAdCount || 0) >= dailyLimit) {
-            showAlert("You have reached the daily ad limit.");
+        if (taskType === 'monitag') {
+            try {
+                await window.show_9572158(); // Show the Monetag ad
+                const rewardAmount = appConfig.rewards.monitag || 0; // Assuming you will add a 'monitag' key to your rewards config
+                const userRef = doc(db, "users", userData.uid);
+                
+                await updateDoc(userRef, { 
+                    balance: (userData.balance || 0) + rewardAmount
+                });
+
+                userData.balance += rewardAmount;
+                updateUI();
+                showAlert(`অভিনন্দন! আপনি ${rewardAmount} কয়েন জিতেছেন।`);
+            } catch(e) {
+                console.error("Monetag ad error:", e);
+                showAlert('বিজ্ঞাপন দেখানো সম্ভব হয়নি।');
+            } finally {
+                loader.style.display = 'none';
+            }
+        } else if (taskType === 'gigapub') {
+            showAlert('Gigapub আয় এখনো সক্রিয় করা হয়নি।');
             loader.style.display = 'none';
-            return;
-        }
-
-        try {
-            await window.show_9572158();
-            const rewardAmount = appConfig.rewards.interstitial || 0;
-            const userRef = doc(db, "users", userData.uid);
-            const newAdCount = (userData.dailyAdCount || 0) + 1;
-            
-            await updateDoc(userRef, { 
-                balance: (userData.balance || 0) + rewardAmount,
-                dailyAdCount: newAdCount,
-                lastAdWatchDate: today
-            });
-
-            userData.balance += rewardAmount;
-            userData.dailyAdCount = newAdCount;
-            userData.lastAdWatchDate = today;
-
-            updateUI();
-            showAlert(`Congratulations! You have won ${rewardAmount} coins.`);
-        } catch(e) {
-            console.error("Ad or database update error:", e);
-            showAlert('Could not show ad or update your balance. Please try again later.');
-        } finally {
+        } else if (taskType === 'webvisit') {
+            showAlert('ওয়েব ভিজিট শীঘ্রই আসছে।');
             loader.style.display = 'none';
+        } else if (taskType === 'telegram') {
+            showAlert('টেলিগ্রাম টাস্ক শীঘ্রই আসছে।');
+            loader.style.display = 'none';
+        } else {
+            // Fallback for other tasks like video ads
+            try {
+                await window.show_9572158();
+                const rewardAmount = appConfig.rewards.interstitial || 0;
+                const userRef = doc(db, "users", userData.uid);
+                const newAdCount = (userData.dailyAdCount || 0) + 1;
+                
+                await updateDoc(userRef, { 
+                    balance: (userData.balance || 0) + rewardAmount,
+                    dailyAdCount: newAdCount,
+                    lastAdWatchDate: today
+                });
+
+                userData.balance += rewardAmount;
+                userData.dailyAdCount = newAdCount;
+                userData.lastAdWatchDate = today;
+
+                updateUI();
+                showAlert(`Congratulations! You have won ${rewardAmount} coins.`);
+            } catch(e) {
+                console.error("Ad or database update error:", e);
+                showAlert('Could not show ad or update your balance. Please try again later.');
+            } finally {
+                loader.style.display = 'none';
+            }
         }
     }
 
