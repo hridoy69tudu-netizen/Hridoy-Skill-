@@ -3,368 +3,635 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard - Swap4Cash</title>
+    <title>Swap4Cash.online</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-        
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCoKBX6p2zsmWq47NXQvgArVXjB4Xu_63g",
-            authDomain: "hridoy-8d6c1.firebaseapp.com",
-            projectId: "hridoy-8d6c1",
-            storageBucket: "hridoy-8d6c1.firebasestorage.app",
-            messagingSenderId: "953393602911",
-            appId: "1:953393602911:web:6685a090899597a9d916ea",
-            measurementId: "G-KP6J8E6W80"
-        };
-        
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
+    <script src='//libtl.com/sdk.js' data-zone='9572158' data-sdk='show_9572158'></script>
+    <script src="https://ad.gigapub.tech/script?id=919"></script>
 
-        // Custom Alert Modal
-        window.showAlert = function(message) {
-            const modal = document.getElementById('custom-alert-modal');
-            const msgElement = document.getElementById('custom-alert-message');
-            msgElement.innerText = message;
-            modal.style.display = 'flex';
-        };
-
-        window.closeAlert = function() {
-            const modal = document.getElementById('custom-alert-modal');
-            modal.style.display = 'none';
-        };
-
-        onAuthStateChanged(auth, user => {
-            if (user) {
-                document.getElementById('main-content-container').style.display = 'block';
-                // Load user data and tasks
-                loadUserData(user.uid);
-                loadTasks();
-            } else {
-                document.getElementById('main-content-container').innerHTML = '<h2>Please log in to view your dashboard.</h2>';
-            }
-        });
-
-        window.handleLogout = async function() {
-            await signOut(auth);
-            window.location.href = "login.html"; // Redirect to login page
-        };
-
-        // Function to load user data from Firestore
-        function loadUserData(userId) {
-            onSnapshot(doc(db, "users", userId), (docSnap) => {
-                if (docSnap.exists()) {
-                    const userData = docSnap.data();
-                    document.getElementById('user-balance').innerText = `$${userData.balance.toFixed(2)}`;
-                    document.getElementById('user-ads-watched').innerText = userData.adsWatched || 0;
-                }
-            });
-        }
-
-        // Function to load tasks from Firestore
-        function loadTasks() {
-            const tasksList = document.getElementById('tasks-list');
-            onSnapshot(collection(db, "tasks"), (querySnapshot) => {
-                tasksList.innerHTML = '';
-                if (querySnapshot.empty) {
-                    tasksList.innerHTML = '<p style="text-align: center; color: #a0aec0;">No tasks available right now. Check back later!</p>';
-                    return;
-                }
-                querySnapshot.forEach((doc) => {
-                    const task = doc.data();
-                    const taskItem = document.createElement('div');
-                    taskItem.classList.add('task-item');
-                    taskItem.innerHTML = `
-                        <h3>${task.title}</h3>
-                        <p>${task.description}</p>
-                        <div class="task-earning">
-                            <span>Earning:</span>
-                            <span class="earning-value">$${task.earning.toFixed(2)}</span>
-                        </div>
-                        <button class="complete-task-btn" data-id="${doc.id}">Complete Task</button>
-                    `;
-                    tasksList.appendChild(taskItem);
-                });
-            });
-        }
-        
-        // Handle Withdrawal Request
-        window.handleWithdrawal = async function() {
-            const amount = parseFloat(document.getElementById('withdrawal-amount').value);
-            const method = document.getElementById('withdrawal-method').value;
-            const account = document.getElementById('withdrawal-account').value;
-            const user = auth.currentUser;
-
-            if (!user) {
-                showAlert("Please log in to make a withdrawal request.");
-                return;
-            }
-
-            if (amount <= 0 || !method || !account) {
-                showAlert("Please fill in all withdrawal details.");
-                return;
-            }
-
-            try {
-                // Add the withdrawal request to the database
-                await addDoc(collection(db, "withdrawal_requests"), {
-                    userId: user.uid,
-                    amount: amount,
-                    method: method,
-                    account: account,
-                    status: 'pending',
-                    timestamp: new Date()
-                });
-                
-                showAlert("Withdrawal request submitted successfully! Your request is pending.");
-                document.getElementById('withdrawal-amount').value = '';
-                document.getElementById('withdrawal-account').value = '';
-
-            } catch (error) {
-                console.error("Error submitting withdrawal request:", error);
-                showAlert("Failed to submit withdrawal request. Please try again.");
-            }
-        };
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const tabs = document.querySelectorAll('.tab-item');
-            const sections = document.querySelectorAll('.content-section');
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    const target = tab.getAttribute('data-tab');
-                    sections.forEach(s => {
-                        s.classList.remove('active');
-                        if (s.id === target) {
-                            s.classList.add('active');
-                        }
-                    });
-                });
-            });
-        });
-
-    </script>
     <style>
+        /* CSS for a clean, dark-themed UI */
         body {
-            background-color: #1a202c;
+            background-color: #0d1117;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #e0e0e0;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         .header {
-            background-color: #2d3748;
-            padding: 20px;
-            text-align: center;
-            border-bottom: 2px solid #4CAF50;
-            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: #1a202c;
+            border-bottom: 1px solid #2d3748;
         }
-        .header h1 {
-            margin: 0;
-            font-size: 1.8em;
-            color: #e0e0e0;
+        .header .logo {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #4CAF50;
         }
-        .logout-btn {
-            background-color: #e65100;
+        .header .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .header .auth-buttons button {
+            background-color: #4CAF50;
             color: white;
+            border: none;
             padding: 8px 15px;
             border-radius: 5px;
             cursor: pointer;
-            border: none;
-            font-size: 0.9em;
-            position: absolute;
-            top: 50%;
-            right: 20px;
-            transform: translateY(-50%);
-        }
-        .tabs {
-            display: flex;
-            justify-content: center;
-            background-color: #1a202c;
-            border-bottom: 1px solid #4a5568;
-        }
-        .tab-item {
-            padding: 15px 30px;
-            cursor: pointer;
-            color: #a0aec0;
             font-weight: bold;
-            transition: color 0.3s ease;
+            transition: background-color 0.3s ease;
         }
-        .tab-item:hover, .tab-item.active {
-            color: #4CAF50;
-            border-bottom: 2px solid #4CAF50;
+        .header .auth-buttons button.logout-btn {
+            background-color: #dc3545;
         }
-        .main-container {
+        .header .auth-buttons button:hover {
+            background-color: #45a049;
+        }
+        .main-content {
+            flex: 1;
             padding: 20px;
         }
+        .balance-card {
+            background: linear-gradient(135deg, #1f2735, #14181f);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            margin-bottom: 25px;
+        }
+        .balance-card h2 {
+            font-size: 1.1em;
+            margin-top: 0;
+            color: #909090;
+        }
+        .balance-card .amount {
+            font-size: 3.5em;
+            font-weight: bold;
+            color: #28a745;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .balance-card .ad-earning {
+            font-size: 0.9em;
+            color: #707070;
+            margin-top: 10px;
+        }
+        .withdraw-button {
+            background-color: #e65100;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+        .withdraw-button:hover {
+            background-color: #bf360c;
+        }
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .option-card {
+            background-color: #1f2735;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+        .option-card h3 {
+            font-size: 1.1em;
+            margin: 0;
+            color: #b0b0b0;
+        }
+        .option-card button {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+        .option-card button:hover {
+            background-color: #1e87d6;
+        }
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            background-color: #1a202c;
+            padding: 10px 0;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
+            border-top: 1px solid #2d3748;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #707070;
+            font-size: 0.8em;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+        .nav-item:hover, .nav-item.active {
+            color: #2196F3;
+        }
+        .nav-item i {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .profit-details {
+            background-color: #1f2735;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .profit-details p {
+            margin: 8px 0;
+            font-size: 1em;
+            color: #b0b0b0;
+        }
+        .profit-details p strong {
+            color: #e0e0e0;
+        }
+        /* Main content sections to be shown/hidden */
         .content-section {
             display: none;
         }
         .content-section.active {
             display: block;
         }
-        .dashboard-card {
-            background-color: #2d3748;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-        .dashboard-card h2 {
-            font-size: 1.5em;
-            margin-top: 0;
-            border-bottom: 1px solid #4a5568;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-            color: #4CAF50;
-        }
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            text-align: center;
-        }
-        .info-item {
-            background-color: #1a202c;
-            padding: 15px;
-            border-radius: 8px;
-        }
-        .info-item .value {
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #2196F3;
-        }
-        .withdrawal-form label, .withdrawal-form input, .withdrawal-form select {
-            display: block;
-            width: 100%;
-            margin-top: 15px;
-            margin-bottom: 5px;
-        }
-        .withdrawal-form input, .withdrawal-form select {
+        /* Style for the ad status message */
+        #ad-status-message {
+            margin-top: 20px;
             padding: 10px;
+            background-color: #1f2735;
             border-radius: 5px;
-            border: 1px solid #4a5568;
+            text-align: center;
+            display: none; /* Initially hidden */
+        }
+        .withdraw-form {
+            background-color: #1f2735;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .withdraw-form label {
+            display: block;
+            margin-bottom: 5px;
+            color: #b0b0b0;
+        }
+        .withdraw-form input, .withdraw-form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #2d3748;
             background-color: #1a202c;
             color: #e0e0e0;
         }
-        .withdrawal-form button {
+        .withdraw-form button {
             width: 100%;
-            padding: 12px;
-            margin-top: 20px;
-            background-color: #2196F3;
+            background-color: #28a745;
             color: white;
             border: none;
+            padding: 12px;
             border-radius: 5px;
-            cursor: pointer;
-            font-size: 1.1em;
+            font-size: 1em;
             font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
-        
-        .tasks-list-container {
+        .withdraw-form button:hover {
+            background-color: #218838;
+        }
+
+        /* New styles for Login/Registration forms */
+        .auth-section {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+            padding: 20px;
         }
-        .task-item {
-            background-color: #1a202c;
-            padding: 15px;
-            border-radius: 8px;
+        .auth-card {
+            background: #1f2735;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
         }
-        .task-item h3 {
-            margin-top: 0;
+        .auth-card h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
             color: #4CAF50;
         }
-        .task-earning {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-            font-size: 1.1em;
-            font-weight: bold;
-        }
-        .complete-task-btn {
-            background-color: #2196F3;
-            color: white;
+        .auth-card input {
+            width: calc(100% - 20px);
             padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #2d3748;
+            background-color: #1a202c;
+            color: #e0e0e0;
+        }
+        .auth-card button {
+            width: 100%;
+            padding: 12px;
             border: none;
             border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 15px;
             font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .auth-card button.primary-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .auth-card button.primary-btn:hover {
+            background-color: #45a049;
+        }
+        .auth-card .toggle-form {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #b0b0b0;
+        }
+        .auth-card .toggle-form a {
+            color: #2196F3;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .auth-card .toggle-form a:hover {
+            text-decoration: underline;
+        }
+        .hidden {
+            display: none !important;
         }
     </style>
 </head>
 <body>
-    <div id="main-content-container">
-        <div class="header">
-            <h1>User Dashboard</h1>
+
+    <div class="header">
+        <span class="logo">swap4cash.online</span>
+        <div class="auth-buttons" id="auth-header-buttons">
+            <button onclick="showLoginForm()">Login</button>
+            <button onclick="showRegistrationForm()">Sign Up</button>
+        </div>
+        <div class="auth-buttons hidden" id="logout-header-button">
             <button class="logout-btn" onclick="handleLogout()">Logout</button>
         </div>
+    </div>
 
-        <div class="tabs">
-            <div class="tab-item active" data-tab="dashboard-section">Dashboard</div>
-            <div class="tab-item" data-tab="tasks-section">Tasks</div>
-            <div class="tab-item" data-tab="withdraw-section">Withdraw</div>
+    <div class="auth-section active" id="auth-section">
+        <div class="auth-card" id="login-form">
+            <h2>Login</h2>
+            <form id="login-form-content">
+                <input type="email" id="login-email" placeholder="Email" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <button type="submit" class="primary-btn">Login</button>
+            </form>
+            <div class="toggle-form">
+                Don't have an account? <a href="#" onclick="showRegistrationForm()">Sign up here</a>.
+            </div>
         </div>
 
-        <div class="main-container">
-            <div id="dashboard-section" class="content-section active">
-                <div class="dashboard-card">
-                    <h2>Account Overview</h2>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <div class="value" id="user-balance">$0.00</div>
-                            <div class="label">Total Balance</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="value" id="user-ads-watched">0</div>
-                            <div class="label">Ads Watched</div>
-                        </div>
-                    </div>
-                </div>
+        <div class="auth-card hidden" id="registration-form">
+            <h2>Sign Up</h2>
+            <form id="registration-form-content">
+                <input type="text" id="reg-username" placeholder="Username" required>
+                <input type="email" id="reg-email" placeholder="Email" required>
+                <input type="password" id="reg-password" placeholder="Password" required>
+                <button type="submit" class="primary-btn">Sign Up</button>
+            </form>
+            <div class="toggle-form">
+                Already have an account? <a href="#" onclick="showLoginForm()">Log in here</a>.
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content hidden" id="main-app-content">
+        <div id="home-section" class="content-section active">
+            <div class="balance-card">
+                <h2>Your Current Earning</h2>
+                <div class="amount" id="currentBalance">$0.00</div>
+                <div class="ad-earning">Earning per ad: $ <span id="adEarningRateDisplay">0.15</span></div>
+                <button class="withdraw-button" onclick="handleWithdrawClick()">Withdraw</button>
             </div>
             
-            <div id="tasks-section" class="content-section">
-                <div class="dashboard-card">
-                    <h2>Available Tasks</h2>
-                    <div class="tasks-list-container" id="tasks-list">
-                        <p style="text-align: center; color: #a0aec0;">Loading tasks...</p>
-                    </div>
+            <div class="options-grid">
+                <div class="option-card">
+                    <h3>MoniTag Earning</h3>
+                    <button id="moniTagButton">Open</button>
+                </div>
+                <div class="option-card">
+                    <h3>Gigapub Earning</h3>
+                    <button id="gigapubButton">Open</button>
+                </div>
+                <div class="option-card">
+                    <h3>Web Visit Earning</h3>
+                    <button onclick="handleEarningClick('Web Visit')">Open</button>
+                </div>
+                <div class="option-card">
+                    <h3>Telegram Earning</h3>
+                    <button onclick="handleEarningClick('Telegram')">Open</button>
                 </div>
             </div>
+            <div id="ad-status-message"></div>
+        </div>
 
-            <div id="withdraw-section" class="content-section">
-                <div class="dashboard-card">
-                    <h2>Request Withdrawal</h2>
-                    <form class="withdrawal-form" onsubmit="return false;">
-                        <label for="withdrawal-amount">Amount ($):</label>
-                        <input type="number" id="withdrawal-amount" placeholder="Enter amount" step="0.01" required>
-                        
-                        <label for="withdrawal-method">Withdrawal Method:</label>
-                        <input type="text" id="withdrawal-method" placeholder="e.g., Bkash, Nagad" required>
-                        
-                        <label for="withdrawal-account">Account Number:</label>
-                        <input type="text" id="withdrawal-account" placeholder="Enter account number" required>
-
-                        <button onclick="handleWithdrawal()">Submit Request</button>
-                    </form>
-                </div>
+        <div id="wallet-section" class="content-section">
+            <h2>Wallet</h2>
+            <div class="withdraw-form" id="withdraw-form">
+                <h3>Withdrawal Request</h3>
+                <label for="amount">Amount ($):</label>
+                <input type="number" id="amount" name="amount" placeholder="Enter amount to withdraw" required>
+                <label for="method">Payment Method:</label>
+                <select id="method" name="method" required>
+                    <option value="">Select a method</option>
+                    <option value="bkash">bKash</option>
+                    <option value="nagad">Nagad</option>
+                    <option value="rocket">Rocket</option>
+                </select>
+                <label for="account">Account Number:</label>
+                <input type="text" id="account" name="account" placeholder="Enter your account number" required>
+                <button onclick="submitWithdrawal()">Submit Request</button>
             </div>
         </div>
-    </div>
-    
-    <div id="custom-alert-modal">
-        <div class="custom-alert-content">
-            <h3>Alert</h3>
-            <p id="custom-alert-message"></p>
-            <button onclick="closeAlert()">OK</button>
+
+        <div id="tasks-section" class="content-section">
+            <h2>Tasks Section</h2>
+            <p>Here you can see and complete your tasks.</p>
+        </div>
+
+        <div id="ads-section" class="content-section">
+            <h2>Ads Section</h2>
+            <p>Watch ads to earn money.</p>
+        </div>
+
+        <div id="profile-section" class="content-section">
+             <div class="profit-details">
+                <h2>Profit Details</h2>
+                <p><strong>Username:</strong> <span id="profile-username">User</span></p>
+                <p><strong>Total Ads Watched:</strong> <span id="adsWatchedCountProfile">0</span></p>
+                <p><strong>Total Tasks Completed:</strong> 15</p>
+                <p><strong>Total Withdrawals:</strong> $0.00</p>
+            </div>
+        </div>
+        
+        <div id="settings-section" class="content-section">
+            <h2>Settings Section</h2>
+            <p>You can manage your settings here.</p>
         </div>
     </div>
+
+    <div class="bottom-nav hidden" id="main-bottom-nav">
+        <a class="nav-item active" data-page="home">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a class="nav-item" data-page="tasks">
+            <i class="fas fa-tasks"></i>
+            <span>Tasks</span>
+        </a>
+        <a class="nav-item" data-page="wallet">
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
+        </a>
+        <a class="nav-item" data-page="ads">
+            <i class="fas fa-bullhorn"></i>
+            <span>Ads</span>
+        </a>
+        <a class="nav-item" data-page="profile">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+        <a class="nav-item" data-page="settings">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+    </div>
+
+    <script>
+        // Variables for the app simulation
+        let currentBalance = 0.00; // Start with 0 balance for a new user
+        const adEarningRate = 0.15;
+        let adsWatchedCount = 0;
+        let isLoggedIn = false;
+        let currentUsername = '';
+
+        // Function to update the balance on the page
+        function updateBalanceDisplay() {
+            document.getElementById('currentBalance').innerText = '$' + currentBalance.toFixed(2);
+            document.getElementById('adEarningRateDisplay').innerText = adEarningRate.toFixed(2);
+            document.getElementById('adsWatchedCountProfile').innerText = adsWatchedCount;
+            document.getElementById('profile-username').innerText = currentUsername;
+        }
+
+        // Function to handle showing/hiding different sections
+        function toggleAppView(isLoggedInState) {
+            const authSection = document.getElementById('auth-section');
+            const mainAppContent = document.getElementById('main-app-content');
+            const bottomNav = document.getElementById('main-bottom-nav');
+            const logoutBtn = document.getElementById('logout-header-button');
+            const authBtns = document.getElementById('auth-header-buttons');
+
+            if (isLoggedInState) {
+                authSection.classList.add('hidden');
+                mainAppContent.classList.remove('hidden');
+                bottomNav.classList.remove('hidden');
+                logoutBtn.classList.remove('hidden');
+                authBtns.classList.add('hidden');
+            } else {
+                authSection.classList.remove('hidden');
+                mainAppContent.classList.add('hidden');
+                bottomNav.classList.add('hidden');
+                logoutBtn.classList.add('hidden');
+                authBtns.classList.remove('hidden');
+            }
+        }
+
+        // Function to add money from different ad networks
+        function addEarnings(source) {
+            // This is where you would update Firebase in a real app
+            currentBalance += adEarningRate;
+            adsWatchedCount++;
+            updateBalanceDisplay();
+            const messageEl = document.getElementById('ad-status-message');
+            messageEl.innerText = `Successfully earned $${adEarningRate.toFixed(2)}! Current balance: $${currentBalance.toFixed(2)}.`;
+            messageEl.style.display = 'block';
+            console.log('Earned $' + adEarningRate + '. Current balance: $' + currentBalance.toFixed(2));
+        }
+
+        // --- New Authentication Functions ---
+
+        function showLoginForm() {
+            document.getElementById('registration-form').classList.add('hidden');
+            document.getElementById('login-form').classList.remove('hidden');
+        }
+
+        function showRegistrationForm() {
+            document.getElementById('login-form').classList.add('hidden');
+            document.getElementById('registration-form').classList.remove('hidden');
+        }
+
+        document.getElementById('login-form-content').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            // Simple login logic (in a real app, this would check against a database)
+            if (email === 'user@example.com' && password === 'password123') {
+                isLoggedIn = true;
+                currentUsername = 'HACKER';
+                currentBalance = 1.97; // Restore a sample balance for the logged-in user
+                adsWatchedCount = 0; // Restore a sample ad count
+                toggleAppView(true);
+                updateBalanceDisplay();
+                alert('Login successful!');
+            } else {
+                alert('Invalid email or password. Please try again.');
+            }
+        });
+
+        document.getElementById('registration-form-content').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('reg-username').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+
+            // Simple registration logic (in a real app, this would save to a database)
+            if (username && email && password) {
+                isLoggedIn = true;
+                currentUsername = username;
+                currentBalance = 0.00; // New users start with 0 balance
+                adsWatchedCount = 0;
+                toggleAppView(true);
+                updateBalanceDisplay();
+                alert('Registration successful! You are now logged in.');
+            } else {
+                alert('Please fill out all fields.');
+            }
+        });
+
+        function handleLogout() {
+            isLoggedIn = false;
+            currentUsername = '';
+            currentBalance = 0.00;
+            adsWatchedCount = 0;
+            toggleAppView(false);
+            updateBalanceDisplay();
+            showLoginForm(); // Default back to the login form
+            alert('You have been logged out.');
+        }
+
+        // --- Existing Functions, Modified for the new structure ---
+        
+        // Event listener for the MoniTag button
+        document.getElementById('moniTagButton').addEventListener('click', function() {
+            const messageEl = document.getElementById('ad-status-message');
+            messageEl.innerText = 'Ad loading... Please wait.';
+            messageEl.style.display = 'block';
+
+            if (typeof show_9572158 === 'function') {
+                show_9572158();
+                setTimeout(function() {
+                    addEarnings('MoniTag');
+                }, 3000);
+            } else {
+                messageEl.innerText = 'MoniTag ad failed to load. Please check your internet connection.';
+            }
+        });
+
+        // Event listener for the Gigapub button
+        document.getElementById('gigapubButton').addEventListener('click', function() {
+            const messageEl = document.getElementById('ad-status-message');
+            messageEl.innerText = 'Ad loading... Please wait.';
+            messageEl.style.display = 'block';
+            
+            if (typeof Window.showGiga === 'function') {
+                Window.showGiga().then(() => {
+                    addEarnings('Gigapub');
+                }).catch(e => {
+                    messageEl.innerText = `Gigapub ad failed to load.`;
+                    console.error("Gigapub Ad Failed:", e);
+                });
+            } else {
+                messageEl.innerText = 'Gigapub SDK not loaded. Please check your internet connection.';
+            }
+        });
+
+        function handleEarningClick(source) {
+            alert(source + ' Earning section is opening.');
+        }
+
+        function handleWithdrawClick() {
+            alert('Your withdrawal request has been submitted successfully!');
+        }
+
+        function submitWithdrawal() {
+            const amount = document.getElementById('amount').value;
+            const method = document.getElementById('method').value;
+            const account = document.getElementById('account').value;
+
+            if (amount && method && account) {
+                if (parseFloat(amount) <= currentBalance) {
+                    alert(`Withdrawal of $${amount} to ${method} account ${account} submitted successfully!`);
+                    currentBalance -= parseFloat(amount);
+                    updateBalanceDisplay();
+                } else {
+                    alert('Insufficient balance. Please enter a lower amount.');
+                }
+            } else {
+                alert('Please fill out all the fields.');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navItems.forEach(el => el.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const pageName = this.getAttribute('data-page');
+                    const contentSections = document.querySelectorAll('.content-section');
+                    contentSections.forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    document.getElementById(pageName + '-section').classList.add('active');
+                });
+            });
+
+            // Initial view setup
+            toggleAppView(false);
+            showLoginForm();
+            updateBalanceDisplay();
+        });
+    </script>
 </body>
 </html>
