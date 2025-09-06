@@ -409,42 +409,13 @@
         }
         
         loader.style.display = 'flex';
-
-        if (taskType === 'monitag') {
-            try {
+        
+        try {
+            if (taskType === 'monitag') {
                 await window.show_9572158(); // Show the Monetag ad
-                const rewardAmount = appConfig.rewards.monitag || 0; // Assuming you will add a 'monitag' key to your rewards config
+                const rewardAmount = appConfig.rewards.monetag || 0;
                 const userRef = doc(db, "users", userData.uid);
-                
-                await updateDoc(userRef, { 
-                    balance: (userData.balance || 0) + rewardAmount
-                });
-
-                userData.balance += rewardAmount;
-                updateUI();
-                showAlert(`অভিনন্দন! আপনি ${rewardAmount} কয়েন জিতেছেন।`);
-            } catch(e) {
-                console.error("Monetag ad error:", e);
-                showAlert('বিজ্ঞাপন দেখানো সম্ভব হয়নি।');
-            } finally {
-                loader.style.display = 'none';
-            }
-        } else if (taskType === 'gigapub') {
-            showAlert('Gigapub আয় এখনো সক্রিয় করা হয়নি।');
-            loader.style.display = 'none';
-        } else if (taskType === 'webvisit') {
-            showAlert('ওয়েব ভিজিট শীঘ্রই আসছে।');
-            loader.style.display = 'none';
-        } else if (taskType === 'telegram') {
-            showAlert('টেলিগ্রাম টাস্ক শীঘ্রই আসছে।');
-            loader.style.display = 'none';
-        } else {
-            // Fallback for other tasks like video ads
-            try {
-                await window.show_9572158();
-                const rewardAmount = appConfig.rewards.interstitial || 0;
-                const userRef = doc(db, "users", userData.uid);
-                const newAdCount = (userData.dailyAdCount || 0) + 1;
+                const newAdCount = (userData.lastAdWatchDate === today ? userData.dailyAdCount : 0) + 1;
                 
                 await updateDoc(userRef, { 
                     balance: (userData.balance || 0) + rewardAmount,
@@ -457,13 +428,21 @@
                 userData.lastAdWatchDate = today;
 
                 updateUI();
-                showAlert(`Congratulations! You have won ${rewardAmount} coins.`);
-            } catch(e) {
-                console.error("Ad or database update error:", e);
-                showAlert('Could not show ad or update your balance. Please try again later.');
-            } finally {
-                loader.style.display = 'none';
+                showAlert(`অভিনন্দন! আপনি ${rewardAmount} কয়েন জিতেছেন।`);
+            } else if (taskType === 'gigapub') {
+                showAlert('Gigapub আয় এখনো সক্রিয় করা হয়নি।');
+            } else if (taskType === 'webvisit') {
+                showAlert('ওয়েব ভিজিট শীঘ্রই আসছে।');
+            } else if (taskType === 'telegram') {
+                showAlert('টেলিগ্রাম টাস্ক শীঘ্রই আসছে।');
+            } else {
+                showAlert('Unknown task type.');
             }
+        } catch(e) {
+            console.error("Ad or database update error:", e);
+            showAlert('বিজ্ঞাপন দেখানো সম্ভব হয়নি অথবা ব্যালেন্স আপডেট করা সম্ভব হয়নি।');
+        } finally {
+            loader.style.display = 'none';
         }
     }
 
