@@ -47,6 +47,7 @@
         <div class="card-bg p-6 rounded-lg">
             <input id="login-email" type="email" placeholder="Email" class="w-full p-3 rounded-lg input-field mb-4">
             <input id="login-password" type="password" placeholder="Password" class="w-full p-3 rounded-lg input-field mb-4">
+            <input id="register-name" type="text" placeholder="Full Name (for new users)" class="w-full p-3 rounded-lg input-field mb-4">
             <button id="login-btn" class="w-full p-3 rounded-lg btn-accent mb-4">Login</button>
             <button id="register-btn" class="w-full p-3 rounded-lg btn-outline-accent">Register</button>
         </div>
@@ -177,6 +178,7 @@
     const historyListEl = document.getElementById('history-list');
     const withdrawalMethodSelect = document.getElementById('withdrawal-method');
     const minWithdrawalTextEl = document.getElementById('min-withdrawal-text');
+    const registerNameInput = document.getElementById('register-name');
 
     // On Load & Auth State Change
     window.onload = () => {
@@ -210,20 +212,9 @@
                     loadHistory();
                     loadWithdrawalMethods();
                 } else {
-                    // Create new user document
-                    await setDoc(userDocRef, {
-                        uid: user.uid,
-                        email: user.email,
-                        name: user.email.split('@')[0],
-                        balance: 0,
-                        dailyAdCount: 0,
-                        lastAdWatchDate: '',
-                        isBlocked: false,
-                        createdAt: serverTimestamp()
-                    });
-                    userData = { uid: user.uid, email: user.email, name: user.email.split('@')[0], balance: 0, dailyAdCount: 0, lastAdWatchDate: '', isBlocked: false };
-                    showAlert("Registration successful! Welcome.");
-                    handleAuthStateChange(user); // Reload with new data
+                    // This case should not be hit with the new logic, but kept as a fallback
+                    showAlert("User data not found. Please try logging in again.");
+                    await signOut(auth);
                 }
             } catch (error) {
                 console.error("Error loading user data:", error);
@@ -242,6 +233,9 @@
     async function handleLogin() {
         const email = document.getElementById('login-email').value;
         const password = document.getElementById('login-password').value;
+        if (!email || !password) {
+            return showAlert("Please enter both email and password.");
+        }
         loader.style.display = 'flex';
         try {
             await signInWithEmailAndPassword(auth, email, password);
@@ -253,11 +247,28 @@
     }
 
     async function handleRegister() {
+        const name = registerNameInput.value;
         const email = document.getElementById('login-email').value;
         const password = document.getElementById('login-password').value;
+
+        if (!name || !email || !password) {
+            return showAlert("Please fill in all fields (Full Name, Email, Password).");
+        }
         loader.style.display = 'flex';
         try {
-            await createUserWithEmailAndPassword(auth, email, password);
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            await setDoc(doc(db, "users", user.uid), {
+                uid: user.uid,
+                email: email,
+                name: name,
+                balance: 0,
+                dailyAdCount: 0,
+                lastAdWatchDate: '',
+                isBlocked: false,
+                createdAt: serverTimestamp()
+            });
+            showAlert("Registration successful! Welcome.");
         } catch (error) {
             showAlert("Registration failed: " + error.message);
         } finally {
@@ -288,8 +299,12 @@
 
     // Tasks & Ads
     async function handleAdWatch() {
-        if (!userData || !appConfig) return;
-
+        if (!userData || !appConfig) {
+            return showAlert("Ad not available. Please try again later.");
+        }
+        
+        loader.style.display = 'flex';
+        
         const dailyLimit = appConfig.dailyAdLimit || 0;
         if (userData.lastAdWatchDate !== today) {
             // Reset daily count if it's a new day
@@ -300,6 +315,7 @@
 
         if ((userData.dailyAdCount || 0) >= dailyLimit) {
             showAlert("You have reached the daily ad limit.");
+            loader.style.display = 'none';
             return;
         }
 
@@ -324,6 +340,8 @@
         } catch(e) {
             console.error("Ad or database update error:", e);
             showAlert('Could not show ad or update your balance. Please try again later.');
+        } finally {
+            loader.style.display = 'none';
         }
     }
 
