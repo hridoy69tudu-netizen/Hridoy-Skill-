@@ -57,13 +57,23 @@
 <div id="login-section" class="min-h-screen p-6 flex-col justify-center items-center">
     <div class="max-w-md w-full mx-auto">
         <h1 class="text-4xl font-bold text-center mb-2 text-accent">Welcome</h1>
-        <p class="text-center text-gray-400 mb-8">Login or Register</p>
+        <p class="text-center text-gray-400 mb-8" id="form-heading">Login to your account</p>
         <div class="card-bg p-6 rounded-lg">
-            <input id="login-email" type="email" placeholder="Email" class="w-full p-3 rounded-lg input-field mb-4">
-            <input id="login-password" type="password" placeholder="Password" class="w-full p-3 rounded-lg input-field mb-4">
-            <input id="register-name" type="text" placeholder="Full Name (for new users)" class="w-full p-3 rounded-lg input-field mb-4">
-            <button id="login-btn" class="w-full p-3 rounded-lg btn-accent mb-4">Login</button>
-            <button id="register-btn" class="w-full p-3 rounded-lg btn-outline-accent">Register</button>
+            
+            <div id="login-form">
+                <input id="login-email" type="email" placeholder="Email" class="w-full p-3 rounded-lg input-field mb-4">
+                <input id="login-password" type="password" placeholder="Password" class="w-full p-3 rounded-lg input-field mb-4">
+                <button id="login-btn" class="w-full p-3 rounded-lg btn-accent mb-4">Login</button>
+                <button id="toggle-register-btn" class="w-full p-3 rounded-lg btn-outline-accent">Don't have an account? Register</button>
+            </div>
+            
+            <div id="register-form" class="hidden">
+                <input id="register-name" type="text" placeholder="Full Name" class="w-full p-3 rounded-lg input-field mb-4">
+                <input id="register-email" type="email" placeholder="Email" class="w-full p-3 rounded-lg input-field mb-4">
+                <input id="register-password" type="password" placeholder="Password" class="w-full p-3 rounded-lg input-field mb-4">
+                <button id="register-btn" class="w-full p-3 rounded-lg btn-accent mb-4">Register</button>
+                <button id="toggle-login-btn" class="w-full p-3 rounded-lg btn-outline-accent">Already have an account? Login</button>
+            </div>
         </div>
     </div>
 </div>
@@ -89,9 +99,9 @@
             
 
 <div class="balance-card mb-6 mt-4">
-                <p class="text-gray-300 mb-2">Your Current Income</p>
+                <p class="text-gray-300 mb-2">আপনার বর্তমান ইনকাম</p>
                 <p id="user-balance" class="text-5xl font-bold text-white mb-2">৳0.00</p>
-                <p class="text-gray-400">Income per ad: ৳<span id="ad-earning-display">0.00</span></p>
+                <p class="text-gray-400">প্রতি বিজ্ঞাপনে আয়: ৳<span id="ad-earning-display">0.00</span></p>
             </div>
 
             
@@ -99,23 +109,23 @@
 <div class="grid grid-cols-2 gap-4 mt-8">
                 <div class="task-card flex flex-col items-center justify-center text-center">
                     <i data-lucide="monitor" class="w-10 h-10 text-blue-400 mb-2"></i>
-                    <p class="font-bold text-lg mb-2">MoniTag Income</p>
-                    <button class="task-button" onclick="showAlert('Open MoniTag Income')">Open</button>
+                    <p class="font-bold text-lg mb-2">MoniTag আয়</p>
+                    <button class="task-button" onclick="showAlert('MoniTag আয় খুলুন')">খুলুন</button>
                 </div>
                 <div class="task-card flex flex-col items-center justify-center text-center">
                     <i data-lucide="coins" class="w-10 h-10 text-yellow-400 mb-2"></i>
-                    <p class="font-bold text-lg mb-2">Gigapub Income</p>
-                    <button class="task-button" onclick="showAlert('Open Gigapub Income')">Open</button>
+                    <p class="font-bold text-lg mb-2">Gigapub আয়</p>
+                    <button class="task-button" onclick="showAlert('Gigapub আয় খুলুন')">খুলুন</button>
                 </div>
                 <div class="task-card flex flex-col items-center justify-center text-center">
                     <i data-lucide="globe" class="w-10 h-10 text-green-400 mb-2"></i>
-                    <p class="font-bold text-lg mb-2">Web Visit</p>
-                    <button class="task-button" onclick="showAlert('Open Web Visit')">Open</button>
+                    <p class="font-bold text-lg mb-2">ওয়েব ভিজিট</p>
+                    <button class="task-button" onclick="showAlert('ওয়েব ভিজিট খুলুন')">খুলুন</button>
                 </div>
                 <div class="task-card flex flex-col items-center justify-center text-center">
                     <i data-lucide="send" class="w-10 h-10 text-purple-400 mb-2"></i>
-                    <p class="font-bold text-lg mb-2">Telegram Income</p>
-                    <button class="task-button" onclick="showAlert('Open Telegram Income')">Open</button>
+                    <p class="font-bold text-lg mb-2">টেলিগ্রাম আয়</p>
+                    <button class="task-button" onclick="showAlert('টেলিগ্রাম আয় খুলুন')">খুলুন</button>
                 </div>
             </div>
 
@@ -249,17 +259,21 @@
     const userPanelContainer = document.getElementById('user-panel-container');
     const userBalanceEl = document.getElementById('user-balance');
     const adEarningDisplayEl = document.getElementById('ad-earning-display');
-    const adCountDisplay = document.getElementById('ad-count-display'); // Still exists in tasks page
-    const adProgressBar = document.getElementById('ad-progress-bar'); // Still exists in tasks page
-    const userNameEl = document.getElementById('user-name'); // For header, might be less visible now
+    const adCountDisplay = document.getElementById('ad-count-display');
+    const adProgressBar = document.getElementById('ad-progress-bar');
     const referralCodeEl = document.getElementById('referral-code');
     const historyListEl = document.getElementById('history-list');
     const withdrawalMethodSelect = document.getElementById('withdrawal-method');
     const minWithdrawalTextEl = document.getElementById('min-withdrawal-text');
-    const registerNameInput = document.getElementById('register-name');
-    const mainHeader = document.getElementById('main-header'); // New header for home page
+    const mainHeader = document.getElementById('main-header');
     const notificationsListEl = document.getElementById('notifications-list');
 
+    // New DOM Elements for form toggling
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    const toggleRegisterBtn = document.getElementById('toggle-register-btn');
+    const toggleLoginBtn = document.getElementById('toggle-login-btn');
+    const formHeading = document.getElementById('form-heading');
 
     // On Load & Auth State Change
     window.onload = () => {
@@ -292,9 +306,8 @@
                     updateUI();
                     loadHistory();
                     loadWithdrawalMethods();
-                    loadNotifications(); // Load notifications for user
+                    loadNotifications();
                 } else {
-                    // This case should not be hit with the new logic, but kept as a fallback
                     showAlert("User data not found. Please try logging in again.");
                     await signOut(auth);
                 }
@@ -329,9 +342,9 @@
     }
 
     async function handleRegister() {
-        const name = registerNameInput.value.trim();
-        const email = document.getElementById('login-email').value.trim();
-        const password = document.getElementById('login-password').value;
+        const name = document.getElementById('register-name').value.trim();
+        const email = document.getElementById('register-email').value.trim();
+        const password = document.getElementById('register-password').value;
 
         if (!name || !email || !password) {
             return showAlert("Please fill in all fields (Full Name, Email, Password).");
@@ -366,25 +379,20 @@
     function updateUI() {
         if (!userData || !appConfig) return;
 
-        // Header for home page, username can be adjusted if needed
-        // userNameEl.textContent = userData.name || userData.email;
-        
-        // Home page balance and ad earning
         userBalanceEl.textContent = `৳${(userData.balance || 0).toFixed(2)}`;
         adEarningDisplayEl.textContent = (appConfig.rewards.interstitial || 0).toFixed(2);
         
         referralCodeEl.textContent = userData.uid.slice(0, 10);
         minWithdrawalTextEl.textContent = `Minimum withdrawal amount: ${appConfig.minWithdrawal || 0} coins`;
 
-        // Task page ad details
         document.getElementById('reward-interstitial-display').textContent = appConfig.rewards.interstitial || 0;
 
         const dailyLimit = appConfig.dailyAdLimit || 0;
         const currentCount = userData.lastAdWatchDate === today ? userData.dailyAdCount : 0;
-        if (adCountDisplay) { // Check if element exists before updating
+        if (adCountDisplay) {
              adCountDisplay.textContent = `${currentCount}/${dailyLimit}`;
         }
-        if (adProgressBar) { // Check if element exists before updating
+        if (adProgressBar) {
             const progress = dailyLimit > 0 ? (currentCount / dailyLimit) * 100 : 0;
             adProgressBar.style.width = `${progress}%`;
         }
@@ -404,7 +412,6 @@
         
         const dailyLimit = appConfig.dailyAdLimit || 0;
         if (userData.lastAdWatchDate !== today) {
-            // Reset daily count if it's a new day
             userData.dailyAdCount = 0;
             const userRef = doc(db, "users", userData.uid);
             await updateDoc(userRef, { dailyAdCount: 0, lastAdWatchDate: today });
@@ -417,7 +424,7 @@
         }
 
         try {
-            await window.show_9572158(); // Show the ad
+            await window.show_9572158();
             const rewardAmount = appConfig.rewards.interstitial || 0;
             const userRef = doc(db, "users", userData.uid);
             const newAdCount = (userData.dailyAdCount || 0) + 1;
@@ -564,37 +571,44 @@
         document.querySelectorAll('.user-page').forEach(p => p.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
         
-        // Update active class for bottom navigation
         document.querySelectorAll('.nav-item').forEach(link => {
             link.classList.remove('active');
             if (link.dataset.page === pageId) link.classList.add('active');
         });
 
-        // Show/hide main header based on page
         if (pageId === 'home-page') {
             mainHeader.classList.remove('hidden');
         } else {
             mainHeader.classList.add('hidden');
         }
         
-        // Reload data for specific pages if needed
         if (pageId === 'history-page') loadHistory();
         if (pageId === 'notifications-page') loadNotifications();
-        // Add more conditional loads for other pages if necessary
+    }
+
+    function toggleForms(isRegister) {
+        if (isRegister) {
+            loginForm.classList.add('hidden');
+            registerForm.classList.remove('hidden');
+            formHeading.textContent = "Create a new account";
+        } else {
+            loginForm.classList.remove('hidden');
+            registerForm.classList.add('hidden');
+            formHeading.textContent = "Login to your account";
+        }
     }
 
     function setupEventListeners() {
         document.getElementById('login-btn').addEventListener('click', handleLogin);
         document.getElementById('register-btn').addEventListener('click', handleRegister);
-        document.getElementById('logout-btn').addEventListener('click', handleLogout);
-        // document.getElementById('watch-ad-btn').addEventListener('click', handleAdWatch); // Now triggered by task cards
+        document.getElementById('toggle-register-btn').addEventListener('click', () => toggleForms(true));
+        document.getElementById('toggle-login-btn').addEventListener('click', () => toggleForms(false));
         document.getElementById('withdraw-btn').addEventListener('click', handleWithdrawal);
         document.getElementById('copy-referral-btn').addEventListener('click', () => {
             navigator.clipboard.writeText(referralCodeEl.textContent);
             showAlert("Referral code copied to clipboard!");
         });
         
-        // Bottom Navigation event listeners
         document.querySelectorAll('.bottom-nav .nav-item').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -612,6 +626,7 @@
         };
     }
     window.showAlert = showAlert;
+
 </script>
 </body>
 </html>
