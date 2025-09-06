@@ -8,43 +8,50 @@
     <script src='//libtl.com/sdk.js' data-zone='9572158' data-sdk='show_9572158'></script>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #121212; color: #ffffff; }
-        .dark-bg { background-color: #121212; }
-        .card-bg { background-color: #1e1e1e; }
-        .border-accent { border-color: #ff8c00; }
-        .text-accent { color: #ff8c00; }
+        /* Base Styles */
+        body { font-family: 'Poppins', sans-serif; background-color: #0d0d0d; color: #e0e0e0; }
+        .dark-bg { background-color: #0d0d0d; }
+        .card-bg { background-color: #1a1a1a; }
+        .border-accent { border-color: #4a90e2; }
+        .text-accent { color: #4a90e2; }
         .btn, .btn-accent, .btn-outline-accent { transition: all 0.2s ease-in-out; transform: scale(1); }
-        .btn:active, .btn-accent:active, .btn-outline-accent:active { transform: scale(0.95); }
-        .btn-accent { background-color: #ff8c00; color: #121212; font-weight: bold; }
-        .btn-accent:hover { background-color: #e67e00; }
-        .btn-outline-accent { border: 1px solid #ff8c00; color: #ff8c00; }
-        .btn-outline-accent:hover { background-color: #ff8c00; color: #121212; }
-        .input-field { background-color: #2c2c2c; border: 1px solid #444; }
+        .btn:active, .btn-accent:active, .btn-outline-accent:active { transform: scale(0.98); }
+        .btn-accent { background-color: #4a90e2; color: #ffffff; font-weight: bold; }
+        .btn-accent:hover { background-color: #3b74b3; }
+        .btn-outline-accent { border: 1px solid #4a90e2; color: #4a90e2; }
+        .btn-outline-accent:hover { background-color: #4a90e2; color: #ffffff; }
+        .input-field { background-color: #2c2c2c; border: 1px solid #444; color: #e0e0e0; }
+        .input-field::placeholder { color: #888; }
         .user-page { display: none; }
         .user-page.active { display: block; animation: fadeIn 0.5s ease-in-out; }
-        .sidebar { background-color: #1e1e1e; }
-        .sidebar-link { transition: background-color 0.2s; }
-        .sidebar-link.active { background-color: #2c2c2c; }
         .progress-bar-container { background-color: #2c2c2c; border-radius: 9999px; height: 8px; overflow: hidden; }
-        .progress-bar { background-color: #ff8c00; height: 100%; transition: width 0.3s ease-in-out; }
+        .progress-bar { background-color: #4a90e2; height: 100%; transition: width 0.3s ease-in-out; }
 
-        /* Custom styles for the new design */
-        .header-bg { background: linear-gradient(135deg, #2a2a2a, #1a1a1a); padding: 1rem; border-bottom-left-radius: 1.5rem; border-bottom-right-radius: 1.5rem; }
-        .balance-card { background: linear-gradient(135deg, #3a3a3a, #1a1a1a); border-radius: 1.5rem; padding: 1.5rem; margin-top: -2rem; position: relative; z-index: 10; border: 1px solid #ff8c00; }
-        .task-card { background: linear-gradient(135deg, #3a3a3a, #1a1a1a); border-radius: 1rem; padding: 1rem; border: 1px solid transparent; transition: all 0.2s ease; }
-        .task-card:hover { border: 1px solid #ff8c00; transform: translateY(-3px); box-shadow: 0 4px 15px rgba(255, 140, 0, 0.2); }
-        .task-button { background-color: #007bff; color: white; border-radius: 0.5rem; padding: 0.75rem 1rem; font-weight: bold; width: 100%; text-align: center; }
-        .task-button:hover { background-color: #0056b3; }
+        /* Custom UI Elements */
+        .header-bg { background: linear-gradient(135deg, #1f1f1f, #0d0d0d); padding: 1rem; border-bottom-left-radius: 2rem; border-bottom-right-radius: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .balance-card { background: linear-gradient(135deg, #2a2a2a, #1a1a1a); border-radius: 2rem; padding: 2rem; margin-top: -2rem; position: relative; z-index: 10; border: 1px solid #3a3a3a; box-shadow: 0 8px 25px rgba(0,0,0,0.5); }
+        .task-card { background: #1a1a1a; border-radius: 1.5rem; padding: 1.5rem; border: 1px solid transparent; transition: all 0.3s ease; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        .task-card:hover { border: 1px solid #4a90e2; transform: translateY(-5px); box-shadow: 0 6px 20px rgba(74, 144, 226, 0.2); }
+        .task-button { background-color: #4a90e2; color: white; border-radius: 0.75rem; padding: 0.75rem 1.5rem; font-weight: bold; width: 100%; text-align: center; }
+        .task-button:hover { background-color: #3b74b3; }
 
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background-color: #1e1e1e; display: flex; justify-content: space-around; padding: 0.5rem 0; box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3); z-index: 50; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #888; text-decoration: none; font-size: 0.75rem; transition: color 0.2s; padding: 0.5rem; position: relative; }
-        .nav-item.active { color: #ff8c00; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a1a; display: flex; justify-content: space-around; padding: 0.75rem 0; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); z-index: 50; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #888; text-decoration: none; font-size: 0.8rem; transition: color 0.3s; padding: 0.5rem; position: relative; }
+        .nav-item.active { color: #4a90e2; }
+        .nav-item.active::after { content: ''; position: absolute; top: -5px; width: 30px; height: 3px; background-color: #4a90e2; border-radius: 9999px; }
         .nav-item .lucide { width: 24px; height: 24px; margin-bottom: 0.25rem; }
 
+        .form-container { background: linear-gradient(135deg, #1f1f1f, #121212); padding: 2.5rem; border-radius: 1.5rem; box-shadow: 0 8px 30px rgba(0,0,0,0.5); }
+        .form-heading { font-size: 2.5rem; font-weight: bold; text-align: center; color: #4a90e2; margin-bottom: 1rem; }
+        .sub-heading { text-align: center; color: #b0b0b0; margin-bottom: 2rem; }
+
+        /* Animations */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -54,26 +61,24 @@
     <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-accent"></div>
 </div>
 
-<div id="login-section" class="min-h-screen p-6 flex-col justify-center items-center">
-    <div class="max-w-md w-full mx-auto">
-        <h1 class="text-4xl font-bold text-center mb-2 text-accent">Welcome</h1>
-        <p class="text-center text-gray-400 mb-8" id="form-heading">Login to your account</p>
-        <div class="card-bg p-6 rounded-lg">
-            
-            <div id="login-form">
-                <input id="login-email" type="email" placeholder="Email" class="w-full p-3 rounded-lg input-field mb-4">
-                <input id="login-password" type="password" placeholder="Password" class="w-full p-3 rounded-lg input-field mb-4">
-                <button id="login-btn" class="w-full p-3 rounded-lg btn-accent mb-4">Login</button>
-                <button id="toggle-register-btn" class="w-full p-3 rounded-lg btn-outline-accent">Don't have an account? Register</button>
-            </div>
-            
-            <div id="register-form" class="hidden">
-                <input id="register-name" type="text" placeholder="Full Name" class="w-full p-3 rounded-lg input-field mb-4">
-                <input id="register-email" type="email" placeholder="Email" class="w-full p-3 rounded-lg input-field mb-4">
-                <input id="register-password" type="password" placeholder="Password" class="w-full p-3 rounded-lg input-field mb-4">
-                <button id="register-btn" class="w-full p-3 rounded-lg btn-accent mb-4">Register</button>
-                <button id="toggle-login-btn" class="w-full p-3 rounded-lg btn-outline-accent">Already have an account? Login</button>
-            </div>
+<div id="login-section" class="min-h-screen p-6 flex items-center justify-center">
+    <div class="max-w-md w-full mx-auto form-container">
+        <h1 class="form-heading">Welcome</h1>
+        <p class="sub-heading" id="form-heading-text">Login to your account</p>
+        
+        <div id="login-form">
+            <input id="login-email" type="email" placeholder="Email" class="w-full p-4 rounded-xl input-field mb-4">
+            <input id="login-password" type="password" placeholder="Password" class="w-full p-4 rounded-xl input-field mb-6">
+            <button id="login-btn" class="w-full p-4 rounded-xl btn-accent mb-4">Login</button>
+            <button id="toggle-register-btn" class="w-full p-4 rounded-xl btn-outline-accent">Don't have an account? Register</button>
+        </div>
+        
+        <div id="register-form" class="hidden">
+            <input id="register-name" type="text" placeholder="Full Name" class="w-full p-4 rounded-xl input-field mb-4">
+            <input id="register-email" type="email" placeholder="Email" class="w-full p-4 rounded-xl input-field mb-4">
+            <input id="register-password" type="password" placeholder="Password" class="w-full p-4 rounded-xl input-field mb-6">
+            <button id="register-btn" class="w-full p-4 rounded-xl btn-accent mb-4">Register</button>
+            <button id="toggle-login-btn" class="w-full p-4 rounded-xl btn-outline-accent">Already have an account? Login</button>
         </div>
     </div>
 </div>
@@ -82,8 +87,8 @@
     
     <header id="main-header" class="header-bg flex items-center justify-between p-4 hidden">
         <div class="flex items-center space-x-3">
-            <img id="profile-pic-display" src="https://via.placeholder.com/40/FF8C00/FFFFFF?text=P" alt="Profile" class="rounded-full w-10 h-10 border-2 border-accent">
-            <h1 id="user-name-display" class="text-2xl font-bold text-accent">HACKER</h1>
+            <img id="profile-pic-display" src="https://via.placeholder.com/40/4A90E2/FFFFFF?text=P" alt="Profile" class="rounded-full w-12 h-12 border-2 border-accent">
+            <h1 id="user-name-display" class="text-2xl font-bold text-white"></h1>
         </div>
         <div class="flex items-center space-x-2">
             <i data-lucide="bell" class="w-6 h-6 text-gray-400"></i>
@@ -91,53 +96,47 @@
     </header>
 
     <main class="flex-grow p-4 overflow-y-auto pb-20"> 
+        
         <div id="home-page" class="user-page active">
-            <div class="balance-card mb-6 mt-4">
-                <p class="text-gray-300 mb-2">আপনার বর্তমান ইনকাম</p>
-                <p id="user-balance" class="text-5xl font-bold text-white mb-2">৳0.00</p>
-                <p class="text-gray-400">প্রতি বিজ্ঞাপনে আয়: ৳<span id="ad-earning-display">0.00</span></p>
+            <div class="balance-card mb-8 mt-4">
+                <p class="text-gray-400 mb-2 font-medium">আপনার বর্তমান ইনকাম</p>
+                <p id="user-balance" class="text-6xl font-extrabold text-white mb-2">৳0.00</p>
+                <p class="text-gray-500 text-sm">প্রতি বিজ্ঞাপনে আয়: ৳<span id="ad-earning-display">0.00</span></p>
             </div>
-            <div class="grid grid-cols-2 gap-4 mt-8">
+            <h2 class="text-2xl font-bold mb-4">আপনার কাজ</h2>
+            <div class="grid grid-cols-2 gap-4">
                 <div class="task-card flex flex-col items-center justify-center text-center">
-                    <i data-lucide="monitor" class="w-10 h-10 text-blue-400 mb-2"></i>
+                    <i data-lucide="monitor" class="w-12 h-12 text-[#2ECC71] mb-2"></i>
                     <p class="font-bold text-lg mb-2">MoniTag আয়</p>
                     <button class="task-button" onclick="handleTask('monitag')">খুলুন</button>
                 </div>
                 <div class="task-card flex flex-col items-center justify-center text-center">
-                    <i data-lucide="coins" class="w-10 h-10 text-yellow-400 mb-2"></i>
+                    <i data-lucide="coins" class="w-12 h-12 text-[#F1C40F] mb-2"></i>
                     <p class="font-bold text-lg mb-2">Gigapub আয়</p>
                     <button class="task-button" onclick="handleTask('gigapub')">খুলুন</button>
                 </div>
+            </div>
+        </div>
+
+        <div id="tasks-page" class="user-page">
+            <h2 class="text-3xl font-bold mb-6">অন্যান্য কাজ</h2>
+            <div class="grid grid-cols-2 gap-4">
                 <div class="task-card flex flex-col items-center justify-center text-center">
-                    <i data-lucide="globe" class="w-10 h-10 text-green-400 mb-2"></i>
+                    <i data-lucide="globe" class="w-12 h-12 text-[#E74C3C] mb-2"></i>
                     <p class="font-bold text-lg mb-2">ওয়েব ভিজিট</p>
                     <button class="task-button" onclick="handleTask('webvisit')">খুলুন</button>
                 </div>
                 <div class="task-card flex flex-col items-center justify-center text-center">
-                    <i data-lucide="send" class="w-10 h-10 text-purple-400 mb-2"></i>
+                    <i data-lucide="send" class="w-12 h-12 text-[#9B59B6] mb-2"></i>
                     <p class="font-bold text-lg mb-2">টেলিগ্রাম আয়</p>
                     <button class="task-button" onclick="handleTask('telegram')">খুলুন</button>
                 </div>
             </div>
         </div>
 
-        <div id="tasks-page" class="user-page">
-            <h2 class="text-3xl font-bold mb-6">Tasks</h2>
-            <p class="text-gray-400">Complete tasks to earn more coins.</p>
-            <div id="tasks-list" class="space-y-4 mt-4">
-                <div class="card-bg p-4 rounded-lg flex items-center justify-between">
-                    <div>
-                        <p class="font-bold">Watch Video Ad</p>
-                        <p class="text-sm text-gray-400">Earn <span id="reward-interstitial-display">0</span> coins per ad view.</p>
-                    </div>
-                    <button class="btn-accent px-4 py-1 rounded-lg text-sm" onclick="handleTask('video')">Watch Ad</button>
-                </div>
-            </div>
-        </div>
-
         <div id="withdraw-page" class="user-page">
             <h2 class="text-3xl font-bold mb-6">Withdraw Coins</h2>
-            <div class="card-bg p-6 rounded-lg">
+            <div class="card-bg p-6 rounded-2xl">
                 <p id="min-withdrawal-text" class="text-center text-gray-400 mb-4"></p>
                 <label for="withdrawal-method" class="block text-sm font-medium mb-2">Withdrawal Method</label>
                 <select id="withdrawal-method" class="w-full p-3 rounded-lg input-field mb-4"></select>
@@ -151,10 +150,10 @@
 
         <div id="refer-page" class="user-page">
             <h2 class="text-3xl font-bold mb-6">Refer & Earn</h2>
-            <div class="card-bg p-6 rounded-lg text-center">
+            <div class="card-bg p-6 rounded-2xl text-center">
                 <p class="text-gray-400 mb-4">Share your referral code to invite friends and earn coins.</p>
                 <p id="referral-code" class="text-4xl font-bold text-accent mb-4"></p>
-                <button id="copy-referral-btn" class="btn-accent px-6 py-2 rounded-lg">Copy Code</button>
+                <button id="copy-referral-btn" class="btn-accent px-6 py-2 rounded-xl">Copy Code</button>
             </div>
         </div>
 
@@ -172,20 +171,20 @@
 
         <div id="settings-page" class="user-page">
             <h2 class="text-3xl font-bold mb-6">Settings</h2>
-            <div class="card-bg p-6 rounded-lg">
+            <div class="card-bg p-6 rounded-2xl">
                 <h3 class="text-xl font-bold mb-4">Update Profile</h3>
                 
                 <div class="flex flex-col items-center mb-6">
-                    <img id="settings-profile-pic-preview" src="https://via.placeholder.com/80/FF8C00/FFFFFF?text=P" alt="Profile" class="rounded-full w-20 h-20 mb-4 border-2 border-accent">
-                    <input type="file" id="profile-pic-upload" class="text-sm">
+                    <img id="settings-profile-pic-preview" src="https://via.placeholder.com/80/4A90E2/FFFFFF?text=P" alt="Profile" class="rounded-full w-24 h-24 mb-4 border-4 border-accent">
+                    <input type="file" id="profile-pic-upload" class="text-sm text-gray-400">
                 </div>
                 
                 <label for="new-name" class="block text-gray-400 mb-2">Your Name</label>
                 <input id="new-name" type="text" placeholder="Enter new name" class="w-full p-3 rounded-lg input-field mb-4">
                 
-                <button id="save-profile-btn" class="w-full p-3 rounded-lg btn-accent">Save Changes</button>
+                <button id="save-profile-btn" class="w-full p-4 rounded-xl btn-accent">Save Changes</button>
             </div>
-            <button id="user-logout-btn" class="w-full p-3 mt-4 rounded-lg btn-outline-accent">Logout</button>
+            <button id="user-logout-btn" class="w-full p-4 mt-4 rounded-xl btn-outline-accent">Logout</button>
         </div>
 
     </main>
@@ -194,6 +193,10 @@
         <a href="#" class="nav-item active" data-page="home-page">
             <i data-lucide="home"></i>
             <span>Home</span>
+        </a>
+        <a href="#" class="nav-item" data-page="tasks-page">
+            <i data-lucide="list-checks"></i>
+            <span>Tasks</span>
         </a>
         <a href="#" class="nav-item" data-page="withdraw-page">
             <i data-lucide="briefcase"></i>
@@ -215,8 +218,8 @@
 </div>
 
 <div id="custom-alert" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-    <div class="bg-gray-800 rounded-lg p-6 w-full max-w-sm text-center">
-        <p id="alert-message" class="mb-4"></p>
+    <div class="bg-gray-800 rounded-xl p-6 w-full max-w-sm text-center shadow-lg border border-gray-700">
+        <p id="alert-message" class="mb-4 text-white font-medium"></p>
         <button id="alert-ok-btn" class="btn-accent px-6 py-2 rounded-lg">OK</button>
     </div>
 </div>
@@ -234,11 +237,11 @@
       measurementId: "G-YG5H5ZFBR8"
     };
 
-    // Firebase Imports
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, where, serverTimestamp, addDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
+    // Firebase Imports - Updated to latest modular SDK
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, where, serverTimestamp, addDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-storage.js";
 
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
@@ -249,7 +252,7 @@
     let userData = null;
     let appConfig = null;
     const today = new Date().toISOString().slice(0, 10);
-    const DEFAULT_PIC_URL = "https://via.placeholder.com/40/FF8C00/FFFFFF?text=P";
+    const DEFAULT_PIC_URL = "https://via.placeholder.com/40/4A90E2/FFFFFF?text=P";
 
     // DOM Elements
     const loader = document.getElementById('loader');
@@ -257,8 +260,6 @@
     const userPanelContainer = document.getElementById('user-panel-container');
     const userBalanceEl = document.getElementById('user-balance');
     const adEarningDisplayEl = document.getElementById('ad-earning-display');
-    const adCountDisplay = document.getElementById('ad-count-display');
-    const adProgressBar = document.getElementById('ad-progress-bar');
     const referralCodeEl = document.getElementById('referral-code');
     const historyListEl = document.getElementById('history-list');
     const withdrawalMethodSelect = document.getElementById('withdrawal-method');
@@ -266,14 +267,12 @@
     const mainHeader = document.getElementById('main-header');
     const notificationsListEl = document.getElementById('notifications-list');
 
-    // New DOM Elements for form toggling
+    // Login/Register Form Elements
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
-    const toggleRegisterBtn = document.getElementById('toggle-register-btn');
-    const toggleLoginBtn = document.getElementById('toggle-login-btn');
-    const formHeading = document.getElementById('form-heading');
+    const formHeadingText = document.getElementById('form-heading-text');
 
-    // Profile & Settings DOM Elements
+    // Profile & Settings Elements
     const userNameDisplayEl = document.getElementById('user-name-display');
     const profilePicDisplayEl = document.getElementById('profile-pic-display');
     const settingsProfilePicPreviewEl = document.getElementById('settings-profile-pic-preview');
@@ -310,6 +309,7 @@
 
                     loginSection.classList.add('hidden');
                     userPanelContainer.classList.remove('hidden');
+                    mainHeader.classList.remove('hidden');
                     updateUI();
                     loadHistory();
                     loadWithdrawalMethods();
@@ -328,7 +328,6 @@
             loginSection.classList.remove('hidden');
             userPanelContainer.classList.add('hidden');
         }
-        loader.style.display = 'none';
     }
 
     // Auth Functions
@@ -388,28 +387,12 @@
         if (!userData || !appConfig) return;
 
         userBalanceEl.textContent = `৳${(userData.balance || 0).toFixed(2)}`;
-        adEarningDisplayEl.textContent = (appConfig.rewards.interstitial || 0).toFixed(2);
+        adEarningDisplayEl.textContent = (appConfig.rewards.monetag || 0).toFixed(2);
         
+        // Display a shortened version of the UID for the referral code
         referralCodeEl.textContent = userData.uid.slice(0, 10);
         minWithdrawalTextEl.textContent = `Minimum withdrawal amount: ${appConfig.minWithdrawal || 0} coins`;
 
-        document.getElementById('reward-interstitial-display').textContent = appConfig.rewards.interstitial || 0;
-
-        const dailyLimit = appConfig.dailyAdLimit || 0;
-        const currentCount = userData.lastAdWatchDate === today ? userData.dailyAdCount : 0;
-        if (adCountDisplay) {
-             adCountDisplay.textContent = `${currentCount}/${dailyLimit}`;
-        }
-        if (adProgressBar) {
-            const progress = dailyLimit > 0 ? (currentCount / dailyLimit) * 100 : 0;
-            adProgressBar.style.width = `${progress}%`;
-        }
-        const watchAdBtn = document.getElementById('watch-ad-btn');
-        if (watchAdBtn) {
-            watchAdBtn.disabled = currentCount >= dailyLimit;
-        }
-
-        // Update profile-related UI
         userNameDisplayEl.textContent = userData.name || 'User';
         const profilePicUrl = userData.profilePicUrl || DEFAULT_PIC_URL;
         profilePicDisplayEl.src = profilePicUrl;
@@ -417,7 +400,7 @@
         newNameInput.value = userData.name;
     }
 
-    // Tasks & Ads
+    // Tasks & Ads (Corrected Logic)
     async function handleTask(taskType) {
         if (!userData || !appConfig) {
             return showAlert("Task not available. Please try again later.");
@@ -427,23 +410,40 @@
         
         try {
             if (taskType === 'monitag') {
-                await window.show_9572158(); // Show the Monetag ad
-                const rewardAmount = appConfig.rewards.monetag || 0;
-                const userRef = doc(db, "users", userData.uid);
-                const newAdCount = (userData.lastAdWatchDate === today ? userData.dailyAdCount : 0) + 1;
+                const dailyLimit = appConfig.dailyAdLimit || 0;
+                const currentCount = userData.lastAdWatchDate === today ? userData.dailyAdCount : 0;
                 
-                await updateDoc(userRef, { 
-                    balance: (userData.balance || 0) + rewardAmount,
-                    dailyAdCount: newAdCount,
-                    lastAdWatchDate: today
-                });
+                if (currentCount >= dailyLimit) {
+                    loader.style.display = 'none';
+                    return showAlert("আপনার দৈনিক বিজ্ঞাপনের সীমা শেষ হয়েছে। আগামীকাল আবার চেষ্টা করুন।");
+                }
+                
+                if (typeof window.show_9572158 === 'function') {
+                    // This function call triggers the Monetag ad.
+                    // The reward granting logic will be handled inside a callback if needed, but
+                    // for now, we'll assume the ad displays and then update the balance.
+                    await window.show_9572158(); // In a real app, this should be awaited properly if possible.
 
-                userData.balance += rewardAmount;
-                userData.dailyAdCount = newAdCount;
-                userData.lastAdWatchDate = today;
+                    const rewardAmount = appConfig.rewards.monetag || 0;
+                    const userRef = doc(db, "users", userData.uid);
+                    
+                    const newAdCount = currentCount + 1;
+                    
+                    await updateDoc(userRef, { 
+                        balance: (userData.balance || 0) + rewardAmount,
+                        dailyAdCount: newAdCount,
+                        lastAdWatchDate: today
+                    });
 
-                updateUI();
-                showAlert(`অভিনন্দন! আপনি ${rewardAmount} কয়েন জিতেছেন।`);
+                    userData.balance += rewardAmount;
+                    userData.dailyAdCount = newAdCount;
+                    userData.lastAdWatchDate = today;
+
+                    updateUI();
+                    showAlert(`অভিনন্দন! আপনি ৳${rewardAmount} জিতেছেন।`);
+                } else {
+                    showAlert('বিজ্ঞাপন লোড হতে ব্যর্থ। কিছুক্ষণ পর আবার চেষ্টা করুন।');
+                }
             } else if (taskType === 'gigapub') {
                 showAlert('Gigapub আয় এখনো সক্রিয় করা হয়নি।');
             } else if (taskType === 'webvisit') {
@@ -490,7 +490,7 @@
             if (Object.keys(updates).length > 0) {
                 const userRef = doc(db, "users", userData.uid);
                 await updateDoc(userRef, updates);
-                userData = { ...userData, ...updates }; // Update local data
+                userData = { ...userData, ...updates };
                 updateUI();
                 showAlert("Profile updated successfully!");
             } else {
@@ -507,7 +507,7 @@
 
     // Withdrawals
     async function handleWithdrawal() {
-        const amount = parseInt(document.getElementById('withdrawal-amount').value);
+        const amount = parseFloat(document.getElementById('withdrawal-amount').value);
         const method = withdrawalMethodSelect.value;
         const detail = document.getElementById('payment-detail').value;
 
@@ -578,11 +578,11 @@
                 const req = doc.data();
                 const date = req.requestedAt ? new Date(req.requestedAt.seconds * 1000).toLocaleString() : 'N/A';
                 const statusColor = req.status === 'pending' ? 'text-yellow-400' : (req.status === 'approved' ? 'text-green-400' : 'text-red-400');
-                historyListEl.innerHTML += `<div class="card-bg p-4 rounded-lg flex items-center justify-between">
+                historyListEl.innerHTML += `<div class="card-bg p-4 rounded-lg flex items-center justify-between shadow-md">
                     <div>
-                        <p class="font-bold">${req.amount} Coins</p>
+                        <p class="font-bold text-lg">${req.amount} Coins</p>
                         <p class="text-sm text-gray-400">Via ${req.method}</p>
-                        <p class="text-xs text-gray-500">${date}</p>
+                        <p class="text-xs text-gray-500 mt-1">${date}</p>
                     </div>
                     <span class="${statusColor} font-semibold capitalize">${req.status}</span>
                 </div>`;
@@ -610,7 +610,7 @@
             querySnapshot.forEach(doc => {
                 const notification = doc.data();
                 const date = notification.createdAt ? new Date(notification.createdAt.seconds * 1000).toLocaleString() : 'N/A';
-                notificationsListEl.innerHTML += `<div class="card-bg p-4 rounded-lg">
+                notificationsListEl.innerHTML += `<div class="card-bg p-4 rounded-lg shadow-md">
                     <p class="font-bold text-lg mb-1">${notification.title}</p>
                     <p class="text-gray-300 text-sm mb-2">${notification.message}</p>
                     <p class="text-xs text-gray-500">${date}</p>
@@ -627,16 +627,10 @@
         document.querySelectorAll('.user-page').forEach(p => p.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
         
-        document.querySelectorAll('.nav-item').forEach(link => {
+        document.querySelectorAll('.bottom-nav .nav-item').forEach(link => {
             link.classList.remove('active');
             if (link.dataset.page === pageId) link.classList.add('active');
         });
-
-        if (pageId === 'home-page') {
-            mainHeader.classList.remove('hidden');
-        } else {
-            mainHeader.classList.add('hidden');
-        }
         
         if (pageId === 'history-page') loadHistory();
         if (pageId === 'notifications-page') loadNotifications();
@@ -651,11 +645,11 @@
         if (isRegister) {
             loginForm.classList.add('hidden');
             registerForm.classList.remove('hidden');
-            formHeading.textContent = "Create a new account";
+            formHeadingText.textContent = "Create a new account";
         } else {
             loginForm.classList.remove('hidden');
             registerForm.classList.add('hidden');
-            formHeading.textContent = "Login to your account";
+            formHeadingText.textContent = "Login to your account";
         }
     }
 
@@ -677,7 +671,6 @@
             });
         });
         
-        // New event listeners for profile update
         saveProfileBtn.addEventListener('click', handleProfileUpdate);
         userLogoutBtn.addEventListener('click', handleLogout);
         
@@ -702,7 +695,6 @@
         };
     }
     window.showAlert = showAlert;
-
 </script>
 </body>
 </html>
