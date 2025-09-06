@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard - Swap4Cash</title>
+    <title>Admin Panel - Swap4Cash</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot, collection, addDoc, updateDoc, increment, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, updateDoc, collection, query, where, getDocs, setDoc, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         
-        // আপনার Firebase কনফিগারেশন
         const firebaseConfig = {
             apiKey: "AIzaSyCoKBX6p2zsmWq47NXQvgArVXjB4Xu_63g",
             authDomain: "hridoy-8d6c1.firebaseapp.com",
+            databaseURL: "https://hridoy-8d6c1-default-rtdb.firebaseio.com",
             projectId: "hridoy-8d6c1",
             storageBucket: "hridoy-8d6c1.firebasestorage.app",
             messagingSenderId: "953393602911",
@@ -22,148 +22,66 @@
             measurementId: "G-KP6J8E6W80"
         };
         
+        const ADMIN_UID = "QJSd0hyYcNZptGEnfpxaqqkESNH2"; 
+
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // কাস্টম অ্যালার্ট ফাংশন
         window.showAlert = function(message) {
             const modal = document.getElementById('custom-alert-modal');
             const msgElement = document.getElementById('custom-alert-message');
             msgElement.innerText = message;
             modal.style.display = 'flex';
-        };
-
+        }
         window.closeAlert = function() {
             const modal = document.getElementById('custom-alert-modal');
             modal.style.display = 'none';
-        };
-
-        let currentUserId = null;
-
+        }
+        
         onAuthStateChanged(auth, user => {
-            if (user) {
-                currentUserId = user.uid;
-                document.getElementById('main-content-container').style.display = 'block';
-                loadUserData(user.uid);
-                loadTasks();
+            if (user && user.uid === ADMIN_UID) {
+                console.log("Admin logged in successfully.");
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('main-content-container').style.display = 'flex';
             } else {
-                document.getElementById('main-content-container').innerHTML = '<h2>Please log in to view your dashboard.</h2>';
-                // window.location.href = "login.html"; // লগইন পেইজে রিডাইরেক্ট করতে পারেন
+                console.log("Not an admin or not logged in.");
+                document.getElementById('login-section').style.display = 'flex';
+                document.getElementById('main-content-container').style.display = 'none';
             }
         });
 
+        window.handleLogin = async function() {
+            const email = document.getElementById('admin-email').value;
+            const password = document.getElementById('admin-password').value;
+            const errorMessage = document.getElementById('login-error-message');
+            
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                if (user.uid === ADMIN_UID) {
+                    errorMessage.textContent = '';
+                } else {
+                    await signOut(auth);
+                    errorMessage.textContent = 'Invalid credentials or not an admin account.';
+                }
+            } catch (error) {
+                errorMessage.textContent = 'Invalid credentials or an error occurred.';
+                console.error("Login failed:", error);
+            }
+        }
+
         window.handleLogout = async function() {
             await signOut(auth);
-            window.location.href = "index.html"; // ল্যান্ডিং পেইজে রিডাইরেক্ট করা
-        };
-
-        function loadUserData(userId) {
-            onSnapshot(doc(db, "users", userId), (docSnap) => {
-                if (docSnap.exists()) {
-                    const userData = docSnap.data();
-                    document.getElementById('user-balance').innerText = `$${userData.balance.toFixed(2)}`;
-                    document.getElementById('user-ads-watched').innerText = userData.adsWatched || 0;
-                }
-            });
+            console.log("Admin logged out.");
+            document.getElementById('main-content-container').style.display = 'none';
+            document.getElementById('login-section').style.display = 'flex';
         }
-
-        function loadTasks() {
-            const tasksList = document.getElementById('tasks-list');
-            onSnapshot(collection(db, "tasks"), (querySnapshot) => {
-                tasksList.innerHTML = '';
-                if (querySnapshot.empty) {
-                    tasksList.innerHTML = '<p style="text-align: center; color: #a0aec0;">No tasks available right now. Check back later!</p>';
-                    return;
-                }
-                querySnapshot.forEach((doc) => {
-                    const task = doc.data();
-                    const taskItem = document.createElement('div');
-                    taskItem.classList.add('task-item');
-                    taskItem.innerHTML = `
-                        <h3>${task.title}</h3>
-                        <p>${task.description}</p>
-                        <div class="task-earning">
-                            <span>Earning:</span>
-                            <span class="earning-value">$${task.earning.toFixed(2)}</span>
-                        </div>
-                        <button class="complete-task-btn" data-task-id="${doc.id}" data-earning="${task.earning}">Complete Task</button>
-                    `;
-                    tasksList.appendChild(taskItem);
-                });
-            });
-        }
-        
-        window.handleWithdrawal = async function() {
-            const amount = parseFloat(document.getElementById('withdrawal-amount').value);
-            const method = document.getElementById('withdrawal-method').value;
-            const account = document.getElementById('withdrawal-account').value;
-            const user = auth.currentUser;
-
-            if (!user) {
-                showAlert("Please log in to make a withdrawal request.");
-                return;
-            }
-
-            if (amount <= 0 || !method || !account) {
-                showAlert("Please fill in all withdrawal details.");
-                return;
-            }
-
-            try {
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if (!userDoc.exists() || userDoc.data().balance < amount) {
-                    showAlert("Insufficient balance for this withdrawal.");
-                    return;
-                }
-                
-                await addDoc(collection(db, "withdrawal_requests"), {
-                    userId: user.uid,
-                    amount: amount,
-                    method: method,
-                    account: account,
-                    status: 'pending',
-                    timestamp: new Date()
-                });
-
-                await updateDoc(doc(db, "users", user.uid), {
-                    balance: increment(-amount)
-                });
-                
-                showAlert("Withdrawal request submitted successfully! Your request is pending.");
-                document.getElementById('withdrawal-amount').value = '';
-                document.getElementById('withdrawal-account').value = '';
-
-            } catch (error) {
-                console.error("Error submitting withdrawal request:", error);
-                showAlert("Failed to submit withdrawal request. Please try again.");
-            }
-        };
-
-        window.handleTaskCompletion = async function(taskId, earning) {
-            if (!currentUserId) {
-                showAlert("Please log in to complete tasks.");
-                return;
-            }
-
-            try {
-                const userDocRef = doc(db, "users", currentUserId);
-                
-                await updateDoc(userDocRef, {
-                    balance: increment(earning),
-                    adsWatched: increment(1)
-                });
-
-                showAlert(`Task completed successfully! Earned $${earning.toFixed(2)}.`);
-            } catch (error) {
-                console.error("Error completing task:", error);
-                showAlert("Failed to complete task. Please try again.");
-            }
-        };
 
         document.addEventListener('DOMContentLoaded', () => {
             const tabs = document.querySelectorAll('.tab-item');
             const sections = document.querySelectorAll('.content-section');
+            
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     tabs.forEach(t => t.classList.remove('active'));
@@ -178,15 +96,309 @@
                 });
             });
 
-            document.getElementById('tasks-list').addEventListener('click', (e) => {
-                if (e.target.classList.contains('complete-task-btn')) {
-                    const taskId = e.target.dataset.taskId;
-                    const earning = parseFloat(e.target.dataset.earning);
-                    handleTaskCompletion(taskId, earning);
+            // --- Dashboard and Withdrawal Requests ---
+            const requestsTableBody = document.getElementById('withdrawal-requests-table');
+            const totalUsersValue = document.getElementById('total-users');
+            const pendingRequestsValue = document.getElementById('pending-requests');
+            
+            onSnapshot(collection(db, "users"), (snapshot) => {
+                totalUsersValue.innerText = snapshot.size;
+            });
+
+            onSnapshot(collection(db, "withdrawal_requests"), (querySnapshot) => {
+                const requests = [];
+                let pendingCount = 0;
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    requests.push({ id: doc.id, ...data });
+                    if (data.status === 'pending') {
+                        pendingCount++;
+                    }
+                });
+                
+                requests.sort((a, b) => (a.status === 'pending' ? -1 : 1));
+                pendingRequestsValue.innerText = pendingCount;
+                renderWithdrawalRequests(requests);
+            });
+
+            function renderWithdrawalRequests(requests) {
+                requestsTableBody.innerHTML = '';
+                if (requests.length === 0) {
+                    requestsTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No withdrawal requests found.</td></tr>';
+                    return;
+                }
+                requests.forEach(request => {
+                    const row = document.createElement('tr');
+                    const statusClass = request.status === 'pending' ? 'status-pending' : 'status-approved';
+                    const actionButtons = request.status === 'pending' ?
+                        `<button class="action-button approve" data-id="${request.id}">Approve</button> <button class="action-button reject" data-id="${request.id}">Reject</button>` :
+                        '-';
+                    row.innerHTML = `
+                        <td>${request.userId ? request.userId.substring(0, 8) + '...' : 'N/A'}</td>
+                        <td>$${request.amount.toFixed(2)}</td>
+                        <td>${request.method}</td>
+                        <td>${request.account}</td>
+                        <td><span class="status-badge ${statusClass}">${request.status}</span></td>
+                        <td>${actionButtons}</td>
+                    `;
+                    requestsTableBody.appendChild(row);
+                });
+            }
+            
+            requestsTableBody.addEventListener('click', async (e) => {
+                if (!e.target.classList.contains('action-button')) return;
+                const docId = e.target.getAttribute('data-id');
+                const newStatus = e.target.classList.contains('approve') ? 'approved' : 'rejected';
+                
+                try {
+                    await updateDoc(doc(db, "withdrawal_requests", docId), { status: newStatus });
+                    showAlert(`Request ${newStatus} successfully!`);
+                } catch (error) {
+                    console.error("Error updating document:", error);
+                    showAlert("Error updating request. Check console for details.");
+                }
+            });
+
+            // --- User Management ---
+            const usersTableBody = document.getElementById('users-table-body');
+            onSnapshot(collection(db, "users"), (querySnapshot) => {
+                const users = [];
+                querySnapshot.forEach((doc) => {
+                    users.push({ id: doc.id, ...doc.data() });
+                });
+                renderUsersTable(users);
+            });
+
+            function renderUsersTable(users) {
+                usersTableBody.innerHTML = '';
+                 if (users.length === 0) {
+                    usersTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No users found.</td></tr>';
+                    return;
+                }
+                users.forEach(user => {
+                    const row = document.createElement('tr');
+                    const status = user.status || 'active'; 
+                    const buttonText = status === 'blocked' ? 'Unblock' : 'Block';
+                    const buttonClass = status === 'blocked' ? 'unblock' : 'block';
+                    row.innerHTML = `
+                        <td>${user.id ? user.id.substring(0, 8) + '...' : 'N/A'}</td>
+                        <td>$${user.balance ? user.balance.toFixed(2) : '0.00'}</td>
+                        <td>${user.adsWatched || 0}</td>
+                        <td><span class="status-badge status-${status}">${status}</td>
+                        <td><button class="action-button ${buttonClass}" data-id="${user.id}">${buttonText}</button></td>
+                    `;
+                    usersTableBody.appendChild(row);
+                });
+            }
+
+            usersTableBody.addEventListener('click', async (e) => {
+                if (!e.target.classList.contains('action-button')) return;
+                const userId = e.target.getAttribute('data-id');
+                const newStatus = e.target.classList.contains('block') ? 'blocked' : 'active';
+
+                try {
+                    await updateDoc(doc(db, "users", userId), { status: newStatus });
+                    showAlert(`User status updated to ${newStatus}!`);
+                } catch (error) {
+                    console.error("Error updating user status:", error);
+                    showAlert("Error updating user status. Check console.");
+                }
+            });
+
+            // --- Task Management ---
+            const tasksTableBody = document.getElementById('tasks-table-body');
+            
+            onSnapshot(collection(db, "tasks"), (querySnapshot) => {
+                const tasks = [];
+                querySnapshot.forEach((doc) => {
+                    tasks.push({ id: doc.id, ...doc.data() });
+                });
+                renderTasksTable(tasks);
+            });
+
+            function renderTasksTable(tasks) {
+                tasksTableBody.innerHTML = '';
+                if (tasks.length === 0) {
+                    tasksTableBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No tasks found.</td></tr>';
+                    return;
+                }
+                tasks.forEach(task => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${task.title}</td>
+                        <td>${task.description.substring(0, 50)}...</td>
+                        <td>$${task.earning.toFixed(2)}</td>
+                        <td>
+                            <button class="action-button delete-task" data-id="${task.id}">Delete</button>
+                        </td>
+                    `;
+                    tasksTableBody.appendChild(row);
+                });
+            }
+
+            document.getElementById('add-task-btn').addEventListener('click', async () => {
+                const title = document.getElementById('task-title').value;
+                const description = document.getElementById('task-description').value;
+                const earning = parseFloat(document.getElementById('task-earning').value);
+
+                if (!title || !description || isNaN(earning)) {
+                    showAlert("Please fill out all task fields with valid data.");
+                    return;
+                }
+
+                try {
+                    await addDoc(collection(db, "tasks"), { title, description, earning });
+                    showAlert("Task added successfully!");
+                    document.getElementById('task-title').value = '';
+                    document.getElementById('task-description').value = '';
+                    document.getElementById('task-earning').value = '';
+                } catch (error) {
+                    console.error("Error adding task:", error);
+                    showAlert("Error adding task. Check console.");
+                }
+            });
+
+            tasksTableBody.addEventListener('click', async (e) => {
+                if (!e.target.classList.contains('delete-task')) return;
+                const taskId = e.target.getAttribute('data-id');
+
+                try {
+                    await deleteDoc(doc(db, "tasks", taskId));
+                    showAlert("Task deleted successfully!");
+                } catch (error) {
+                    console.error("Error deleting task:", error);
+                    showAlert("Error deleting task. Check console.");
+                }
+            });
+
+            // --- Task Navigation Management ---
+            const navForm = document.getElementById('nav-links-form');
+            const navLinksContainer = document.getElementById('nav-links-container');
+            const navDocRef = doc(db, "settings", "task_navigation");
+
+            onSnapshot(navDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    renderNavLinks(data.links || []);
+                } else {
+                    renderNavLinks([]);
+                }
+            });
+
+            function renderNavLinks(links) {
+                navLinksContainer.innerHTML = '';
+                if (links.length === 0) {
+                    navLinksContainer.innerHTML = '<p style="text-align: center; color: #a0aec0;">No navigation links found.</p>';
+                    return;
+                }
+                links.forEach((link, index) => {
+                    const linkItem = document.createElement('div');
+                    linkItem.classList.add('nav-link-item');
+                    linkItem.innerHTML = `
+                        <div class="link-details">
+                            <span class="link-label">Title:</span> ${link.title}
+                            <br>
+                            <span class="link-label">URL:</span> ${link.url}
+                        </div>
+                        <div class="link-actions">
+                            <button class="action-button edit-nav" data-index="${index}">Edit</button>
+                            <button class="action-button delete-nav" data-index="${index}">Delete</button>
+                        </div>
+                    `;
+                    navLinksContainer.appendChild(linkItem);
+                });
+            }
+
+            navForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const title = document.getElementById('nav-title').value;
+                const url = document.getElementById('nav-url').value;
+                const navIndex = navForm.dataset.editIndex;
+
+                if (!title || !url) {
+                    showAlert("Please fill out both fields.");
+                    return;
+                }
+                
+                try {
+                    const docSnap = await getDoc(navDocRef);
+                    const currentLinks = docSnap.exists() ? docSnap.data().links || [] : [];
+                    
+                    if (navIndex !== undefined) {
+                        // Edit existing link
+                        currentLinks[navIndex] = { title, url };
+                        navForm.removeAttribute('data-edit-index');
+                        document.getElementById('add-nav-btn').innerText = "Add Link";
+                        showAlert("Link updated successfully!");
+                    } else {
+                        // Add new link
+                        currentLinks.push({ title, url });
+                        showAlert("Link added successfully!");
+                    }
+
+                    await setDoc(navDocRef, { links: currentLinks });
+                    navForm.reset();
+                } catch (error) {
+                    console.error("Error managing navigation links:", error);
+                    showAlert("Error managing links. Check console.");
+                }
+            });
+
+            navLinksContainer.addEventListener('click', async (e) => {
+                const index = e.target.dataset.index;
+                if (e.target.classList.contains('delete-nav')) {
+                    if (confirm("Are you sure you want to delete this link?")) {
+                        try {
+                            const docSnap = await getDoc(navDocRef);
+                            const currentLinks = docSnap.exists() ? docSnap.data().links : [];
+                            currentLinks.splice(index, 1);
+                            await setDoc(navDocRef, { links: currentLinks });
+                            showAlert("Link deleted successfully!");
+                        } catch (error) {
+                            console.error("Error deleting link:", error);
+                            showAlert("Error deleting link. Check console.");
+                        }
+                    }
+                } else if (e.target.classList.contains('edit-nav')) {
+                    const docSnap = await getDoc(navDocRef);
+                    const link = docSnap.data().links[index];
+                    document.getElementById('nav-title').value = link.title;
+                    document.getElementById('nav-url').value = link.url;
+                    navForm.dataset.editIndex = index;
+                    document.getElementById('add-nav-btn').innerText = "Update Link";
+                }
+            });
+
+            // --- Settings ---
+            const moniTagInput = document.getElementById('moniTagZoneId');
+            const gigapubInput = document.getElementById('gigapubZoneId');
+            const adEarningRateInput = document.getElementById('adEarningRate');
+            const settingsDocRef = doc(db, "settings", "app_settings");
+
+            onSnapshot(settingsDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    moniTagInput.value = data.moniTagZoneId || '';
+                    gigapubInput.value = data.gigapubZoneId || '';
+                    adEarningRateInput.value = data.adEarningRate || '0.00';
+                }
+            });
+
+            document.getElementById('save-settings-btn').addEventListener('click', async () => {
+                try {
+                    const newSettings = {
+                        moniTagZoneId: moniTagInput.value,
+                        gigapubZoneId: gigapubInput.value,
+                        adEarningRate: parseFloat(adEarningRateInput.value)
+                    };
+                    await setDoc(settingsDocRef, newSettings);
+                    showAlert("Settings saved successfully!");
+                } catch (error) {
+                    console.error("Error saving settings:", error);
+                    showAlert("Error saving settings. Please check the format.");
                 }
             });
         });
-
     </script>
     <style>
         body {
@@ -195,6 +407,9 @@
             color: #e0e0e0;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         .header {
             background-color: #2d3748;
@@ -226,13 +441,15 @@
             justify-content: center;
             background-color: #1a202c;
             border-bottom: 1px solid #4a5568;
+            flex-wrap: wrap;
         }
         .tab-item {
-            padding: 15px 30px;
+            padding: 15px 15px;
             cursor: pointer;
             color: #a0aec0;
             font-weight: bold;
             transition: color 0.3s ease;
+            white-space: nowrap;
         }
         .tab-item:hover, .tab-item.active {
             color: #4CAF50;
@@ -240,6 +457,7 @@
         }
         .main-container {
             padding: 20px;
+            flex-grow: 1;
         }
         .content-section {
             display: none;
@@ -278,20 +496,90 @@
             font-weight: bold;
             color: #2196F3;
         }
-        .withdrawal-form label, .withdrawal-form input, .withdrawal-form select {
-            display: block;
+        .info-item .label {
+            font-size: 0.9em;
+            color: #a0aec0;
+        }
+        table {
             width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            table-layout: fixed;
+        }
+        th, td {
+            padding: 12px 10px;
+            text-align: left;
+            border-bottom: 1px solid #4a5568;
+            word-wrap: break-word;
+        }
+        th {
+            background-color: #4a5568;
+            color: #e2e8f0;
+            font-weight: normal;
+        }
+        td {
+            color: #cbd5e0;
+            font-size: 0.9em;
+        }
+        .action-button {
+            padding: 8px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            margin: 2px;
+            white-space: nowrap;
+        }
+        .approve { background-color: #4CAF50; color: white; }
+        .approve:hover { background-color: #45a049; }
+        .reject { background-color: #e65100; color: white; }
+        .reject:hover { background-color: #bf360c; }
+        .block { background-color: #ffc107; color: #333; }
+        .block:hover { background-color: #e0a800; }
+        .unblock { background-color: #28a745; color: white; }
+        .unblock:hover { background-color: #218838; }
+        .delete-task { background-color: #dc3545; color: white; }
+        .delete-task:hover { background-color: #c82333; }
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            color: white;
+            white-space: nowrap;
+        }
+        .status-pending { background-color: #e65100; }
+        .status-approved, .status-active { background-color: #4CAF50; }
+        .status-blocked { background-color: #ffc107; }
+
+        .settings-form, .add-task-form, .nav-form {
+            background-color: #1a202c;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .settings-form label, .add-task-form label, .nav-form label {
+            display: block;
             margin-top: 15px;
             margin-bottom: 5px;
         }
-        .withdrawal-form input, .withdrawal-form select {
+        .settings-form input, .settings-form textarea,
+        .add-task-form input, .add-task-form textarea,
+        .nav-form input {
+            width: calc(100% - 22px);
             padding: 10px;
             border-radius: 5px;
             border: 1px solid #4a5568;
             background-color: #1a202c;
             color: #e0e0e0;
+            font-size: 1em;
         }
-        .withdrawal-form button {
+        .settings-form textarea, .add-task-form textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        .settings-form button, .add-task-form button, .nav-form button {
             width: 100%;
             padding: 12px;
             margin-top: 20px;
@@ -303,40 +591,60 @@
             font-size: 1.1em;
             font-weight: bold;
         }
-        
-        .tasks-list-container {
-            display: flex;
+
+        #login-section {
+            display: none;
             flex-direction: column;
-            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
         }
-        .task-item {
-            background-color: #1a202c;
-            padding: 15px;
-            border-radius: 8px;
+        .login-card {
+            background-color: #2d3748;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
         }
-        .task-item h3 {
-            margin-top: 0;
-            color: #4CAF50;
+        .login-card h2 {
+            margin-bottom: 20px;
+            color: #e0e0e0;
         }
-        .task-earning {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-            font-size: 1.1em;
-            font-weight: bold;
-        }
-        .complete-task-btn {
-            background-color: #2196F3;
-            color: white;
-            padding: 10px;
-            border: none;
+        .login-card input {
+            width: calc(100% - 24px);
+            padding: 12px;
+            margin-bottom: 15px;
             border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 15px;
+            border: 1px solid #4a5568;
+            background-color: #1a202c;
+            color: #e0e0e0;
             font-size: 1em;
         }
-        /* কাস্টম অ্যালার্ট স্টাইল */
+        .login-card button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        #login-error-message {
+            color: #ff4d4d;
+            margin-top: 10px;
+        }
+        #main-content-container {
+            display: none;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Custom Alert Modal */
         #custom-alert-modal {
             display: none;
             position: fixed;
@@ -375,61 +683,191 @@
             cursor: pointer;
             font-size: 1em;
         }
+
+        .nav-links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .nav-link-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #1a202c;
+            border-radius: 8px;
+        }
+        .link-details {
+            flex-grow: 1;
+        }
+        .link-label {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .link-actions button {
+            margin-left: 5px;
+        }
     </style>
 </head>
 <body>
+    <div id="login-section">
+        <div class="login-card">
+            <h2>Admin Login</h2>
+            <input type="email" id="admin-email" placeholder="Email" required>
+            <input type="password" id="admin-password" placeholder="Password" required>
+            <button onclick="handleLogin()">Login</button>
+            <div id="login-error-message"></div>
+        </div>
+    </div>
+
     <div id="main-content-container">
         <div class="header">
-            <h1>User Dashboard</h1>
+            <h1>Admin Panel</h1>
             <button class="logout-btn" onclick="handleLogout()">Logout</button>
         </div>
 
         <div class="tabs">
             <div class="tab-item active" data-tab="dashboard-section">Dashboard</div>
+            <div class="tab-item" data-tab="users-section">Users</div>
             <div class="tab-item" data-tab="tasks-section">Tasks</div>
-            <div class="tab-item" data-tab="withdraw-section">Withdraw</div>
+            <div class="tab-item" data-tab="nav-section">Task Navigation</div>
+            <div class="tab-item" data-tab="settings-section">Settings</div>
         </div>
 
         <div class="main-container">
             <div id="dashboard-section" class="content-section active">
                 <div class="dashboard-card">
-                    <h2>Account Overview</h2>
+                    <h2>Dashboard Overview</h2>
                     <div class="info-grid">
                         <div class="info-item">
-                            <div class="value" id="user-balance">$0.00</div>
-                            <div class="label">Total Balance</div>
+                            <div class="value" id="total-users">0</div>
+                            <div class="label">Total Users</div>
                         </div>
                         <div class="info-item">
-                            <div class="value" id="user-ads-watched">0</div>
-                            <div class="label">Ads Watched</div>
+                            <div class="value">0</div>
+                            <div class="label">Daily Active Users</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="value" id="pending-requests">0</div>
+                            <div class="label">Pending Withdrawals</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="value">$0.00</div>
+                            <div class="label">Total Paid Out</div>
                         </div>
                     </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <h2>Withdrawal Requests</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>Account No.</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="withdrawal-requests-table">
+                            <tr><td colspan="6" style="text-align: center;">Loading requests...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="users-section" class="content-section">
+                <div class="dashboard-card">
+                    <h2>User Management</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Balance</th>
+                                <th>Ads Watched</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <tr><td colspan="5" style="text-align: center;">Loading users...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             
             <div id="tasks-section" class="content-section">
                 <div class="dashboard-card">
-                    <h2>Available Tasks</h2>
-                    <div class="tasks-list-container" id="tasks-list">
-                        <p style="text-align: center; color: #a0aec0;">Loading tasks...</p>
+                    <h2>Create New Task</h2>
+                    <form class="add-task-form" onsubmit="return false;">
+                        <label for="task-title">Task Title:</label>
+                        <input type="text" id="task-title" placeholder="e.g., Watch YouTube Video" required>
+                        
+                        <label for="task-description">Task Description:</label>
+                        <textarea id="task-description" placeholder="e.g., Watch the video and like it."></textarea>
+                        
+                        <label for="task-earning">Earning Amount ($):</label>
+                        <input type="number" id="task-earning" placeholder="e.g., 0.50" step="0.01" required>
+                        
+                        <button id="add-task-btn">Add Task</button>
+                    </form>
+                </div>
+                <div class="dashboard-card">
+                    <h2>Existing Tasks</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Earning</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tasks-table-body">
+                            <tr><td colspan="4" style="text-align: center;">Loading tasks...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="nav-section" class="content-section">
+                <div class="dashboard-card">
+                    <h2>Task Navigation Links</h2>
+                    <form id="nav-links-form" class="nav-form" onsubmit="return false;">
+                        <label for="nav-title">Button Title:</label>
+                        <input type="text" id="nav-title" placeholder="e.g., Visit YouTube" required>
+                        
+                        <label for="nav-url">Destination URL:</label>
+                        <input type="url" id="nav-url" placeholder="e.g., https://youtube.com" required>
+                        
+                        <button id="add-nav-btn">Add Link</button>
+                    </form>
+                </div>
+                <div class="dashboard-card">
+                    <h2>Existing Navigation Links</h2>
+                    <div class="nav-links-container" id="nav-links-container">
+                        <p style="text-align: center; color: #a0aec0;">Loading links...</p>
                     </div>
                 </div>
             </div>
 
-            <div id="withdraw-section" class="content-section">
+            <div id="settings-section" class="content-section">
                 <div class="dashboard-card">
-                    <h2>Request Withdrawal</h2>
-                    <form class="withdrawal-form" onsubmit="return false;">
-                        <label for="withdrawal-amount">Amount ($):</label>
-                        <input type="number" id="withdrawal-amount" placeholder="Enter amount" step="0.01" required>
+                    <h2>App Settings</h2>
+                    <form class="settings-form" onsubmit="return false;">
+                        <label for="moniTagZoneId">MoniTag Zone ID:</label>
+                        <input type="text" id="moniTagZoneId" placeholder="Enter MoniTag Zone ID">
                         
-                        <label for="withdrawal-method">Withdrawal Method:</label>
-                        <input type="text" id="withdrawal-method" placeholder="যেমন: Bkash, Nagad" required>
+                        <label for="gigapubZoneId">Gigapub Zone ID:</label>
+                        <input type="text" id="gigapubZoneId" placeholder="Enter Gigapub Zone ID">
                         
-                        <label for="withdrawal-account">Account Number:</label>
-                        <input type="text" id="withdrawal-account" placeholder="অ্যাকাউন্ট নম্বর দিন" required>
-
-                        <button onclick="handleWithdrawal()">Submit Request</button>
+                        <label for="adEarningRate">Ad Earning Rate ($):</label>
+                        <input type="number" id="adEarningRate" step="0.01" placeholder="e.g., 0.15">
+                        
+                        <button id="save-settings-btn">Save Settings</button>
                     </form>
                 </div>
             </div>
