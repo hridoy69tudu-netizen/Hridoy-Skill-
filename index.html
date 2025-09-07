@@ -1,700 +1,654 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CashReward App</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>CashReward App</title>
 
-    <script src='//libtl.com/sdk.js' data-zone='9572158' data-sdk='show_9572158'></script>
+  <script src='//libtl.com/sdk.js' data-zone='9476147' data-sdk='show_9476147'></script>
 
-    <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
 
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    <style>
-        /* Base Styles */
-        body { font-family: 'Poppins', sans-serif; background-color: #0d0d0d; color: #e0e0e0; }
-        .dark-bg { background-color: #0d0d0d; }
-        .card-bg { background-color: #1a1a1a; }
-        .border-accent { border-color: #4a90e2; }
-        .text-accent { color: #4a90e2; }
-        .btn, .btn-accent, .btn-outline-accent { transition: all 0.2s ease-in-out; transform: scale(1); }
-        .btn:active, .btn-accent:active, .btn-outline-accent:active { transform: scale(0.98); }
-        .btn-accent { background-color: #4a90e2; color: #ffffff; font-weight: bold; }
-        .btn-accent:hover { background-color: #3b74b3; }
-        .btn-outline-accent { border: 1px solid #4a90e2; color: #4a90e2; }
-        .btn-outline-accent:hover { background-color: #4a90e2; color: #ffffff; }
-        .input-field { background-color: #2c2c2c; border: 1px solid #444; color: #e0e0e0; }
-        .input-field::placeholder { color: #888; }
-        .user-page { display: none; }
-        .user-page.active { display: block; animation: fadeIn 0.5s ease-in-out; }
-        .progress-bar-container { background-color: #2c2c2c; border-radius: 9999px; height: 8px; overflow: hidden; }
-        .progress-bar { background-color: #4a90e2; height: 100%; transition: width 0.3s ease-in-out; }
-
-        /* Custom UI Elements */
-        .header-bg { background: linear-gradient(135deg, #1f1f1f, #0d0d0d); padding: 1rem; border-bottom-left-radius: 2rem; border-bottom-right-radius: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .balance-card { background: linear-gradient(135deg, #2a2a2a, #1a1a1a); border-radius: 2rem; padding: 2rem; margin-top: -2rem; position: relative; z-index: 10; border: 1px solid #3a3a3a; box-shadow: 0 8px 25px rgba(0,0,0,0.5); }
-        .task-card { background: #1a1a1a; border-radius: 1.5rem; padding: 1.5rem; border: 1px solid transparent; transition: all 0.3s ease; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-        .task-card:hover { border: 1px solid #4a90e2; transform: translateY(-5px); box-shadow: 0 6px 20px rgba(74, 144, 226, 0.2); }
-        .task-button { background-color: #4a90e2; color: white; border-radius: 0.75rem; padding: 0.75rem 1.5rem; font-weight: bold; width: 100%; text-align: center; }
-        .task-button:hover { background-color: #3b74b3; }
-
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a1a; display: flex; justify-content: space-around; padding: 0.75rem 0; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); z-index: 50; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #888; text-decoration: none; font-size: 0.8rem; transition: color 0.3s; padding: 0.5rem; position: relative; }
-        .nav-item.active { color: #4a90e2; }
-        .nav-item.active::after { content: ''; position: absolute; top: -5px; width: 30px; height: 3px; background-color: #4a90e2; border-radius: 9999px; }
-        .nav-item .lucide { width: 24px; height: 24px; margin-bottom: 0.25rem; }
-
-        .form-container { background: linear-gradient(135deg, #1f1f1f, #121212); padding: 2.5rem; border-radius: 1.5rem; box-shadow: 0 8px 30px rgba(0,0,0,0.5); }
-        .form-heading { font-size: 2.5rem; font-weight: bold; text-align: center; color: #4a90e2; margin-bottom: 1rem; }
-        .sub-heading { text-align: center; color: #b0b0b0; margin-bottom: 2rem; }
-
-        /* Animations */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    </style>
+  <style>
+    :root { --accent: #4a90e2; }
+    body { font-family: Poppins, system-ui, -apple-system, Segoe UI, Roboto; background: #0d0d0d; color: #eaeaea; }
+    .card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 1.25rem; box-shadow: 0 6px 24px rgba(0,0,0,.35); }
+    .input { background: #242424; border: 1px solid #3a3a3a; color: #fff; border-radius: .9rem; padding: .9rem; }
+    .input::placeholder { color: #9aa0a6; }
+    .btn { border-radius: .9rem; padding: .9rem 1rem; font-weight: 700; transition: .2s; }
+    .btn:active { transform: scale(.98); }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-accent:hover { filter: brightness(.95); }
+    .btn-outline { border: 1px solid var(--accent); color: var(--accent); background: transparent; }
+    .btn-outline:hover { background: var(--accent); color: #fff; }
+    .page { display: none; animation: fade .25s ease; }
+    .page.active { display: block; }
+    .nav { position: fixed; left: 0; right: 0; bottom: 0; background: #111; border-top: 1px solid #2a2a2a; display: flex; justify-content: space-around; padding: .6rem .25rem; z-index: 50; }
+    .nav a { display: flex; flex-direction: column; align-items: center; gap: .15rem; color: #9aa0a6; font-size: .8rem; }
+    .nav a.active { color: var(--accent); }
+    @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
 </head>
 <body>
 
-<div id="loader" class="hidden fixed inset-0 dark-bg bg-opacity-75 flex items-center justify-center z-50">
-    <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-accent"></div>
+<div id="loader" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
+  <div class="h-16 w-16 rounded-full border-4 border-white/20 border-t-[color:var(--accent)] animate-spin"></div>
 </div>
 
-<div id="login-section" class="min-h-screen p-6 flex items-center justify-center">
-    <div class="max-w-md w-full mx-auto form-container">
-        <h1 class="form-heading">Welcome</h1>
-        <p class="sub-heading" id="form-heading-text">Login to your account</p>
-        
-        <div id="login-form">
-            <input id="login-email" type="email" placeholder="Email" class="w-full p-4 rounded-xl input-field mb-4">
-            <input id="login-password" type="password" placeholder="Password" class="w-full p-4 rounded-xl input-field mb-6">
-            <button id="login-btn" class="w-full p-4 rounded-xl btn-accent mb-4">Login</button>
-            <button id="toggle-register-btn" class="w-full p-4 rounded-xl btn-outline-accent">Don't have an account? Register</button>
-        </div>
-        
-        <div id="register-form" class="hidden">
-            <input id="register-name" type="text" placeholder="Full Name" class="w-full p-4 rounded-xl input-field mb-4">
-            <input id="register-email" type="email" placeholder="Email" class="w-full p-4 rounded-xl input-field mb-4">
-            <input id="register-password" type="password" placeholder="Password" class="w-full p-4 rounded-xl input-field mb-6">
-            <button id="register-btn" class="w-full p-4 rounded-xl btn-accent mb-4">Register</button>
-            <button id="toggle-login-btn" class="w-full p-4 rounded-xl btn-outline-accent">Already have an account? Login</button>
-        </div>
+<section id="auth" class="min-h-screen flex items-center justify-center p-6">
+  <div class="card w-full max-w-md p-6">
+    <h1 class="text-3xl font-bold text-center mb-2">CashReward</h1>
+    <p id="authTitle" class="text-center text-gray-400 mb-6">Login to your account</p>
+
+    <div id="loginForm" class="space-y-4">
+      <input id="loginEmail" type="email" placeholder="Email" class="input w-full">
+      <input id="loginPass" type="password" placeholder="Password" class="input w-full">
+      <button id="loginBtn" class="btn btn-accent w-full">Login</button>
+      <button id="toRegister" class="btn btn-outline w-full">Don't have an account? Register</button>
     </div>
-</div>
 
-<div id="user-panel-container" class="hidden min-h-screen flex flex-col">
-    
-    <header id="main-header" class="header-bg flex items-center justify-between p-4 hidden">
-        <div class="flex items-center space-x-3">
-            <img id="profile-pic-display" src="https://via.placeholder.com/40/4A90E2/FFFFFF?text=P" alt="Profile" class="rounded-full w-12 h-12 border-2 border-accent">
-            <h1 id="user-name-display" class="text-2xl font-bold text-white"></h1>
-        </div>
-        <div class="flex items-center space-x-2">
-            <i data-lucide="bell" class="w-6 h-6 text-gray-400"></i>
-        </div>
-    </header>
-
-    <main class="flex-grow p-4 overflow-y-auto pb-20"> 
-        
-        <div id="home-page" class="user-page active">
-            <div class="balance-card mb-8 mt-4">
-                <p class="text-gray-400 mb-2 font-medium">আপনার বর্তমান ইনকাম</p>
-                <p id="user-balance" class="text-6xl font-extrabold text-white mb-2">৳0.00</p>
-                <p class="text-gray-500 text-sm">প্রতি বিজ্ঞাপনে আয়: ৳<span id="ad-earning-display">0.00</span></p>
-            </div>
-            <h2 class="text-2xl font-bold mb-4">আপনার কাজ</h2>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="task-card flex flex-col items-center justify-center text-center">
-                    <i data-lucide="monitor" class="w-12 h-12 text-[#2ECC71] mb-2"></i>
-                    <p class="font-bold text-lg mb-2">MoniTag আয়</p>
-                    <button class="task-button" onclick="handleTask('monitag')">খুলুন</button>
-                </div>
-                <div class="task-card flex flex-col items-center justify-center text-center">
-                    <i data-lucide="coins" class="w-12 h-12 text-[#F1C40F] mb-2"></i>
-                    <p class="font-bold text-lg mb-2">Gigapub আয়</p>
-                    <button class="task-button" onclick="handleTask('gigapub')">খুলুন</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="tasks-page" class="user-page">
-            <h2 class="text-3xl font-bold mb-6">অন্যান্য কাজ</h2>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="task-card flex flex-col items-center justify-center text-center">
-                    <i data-lucide="globe" class="w-12 h-12 text-[#E74C3C] mb-2"></i>
-                    <p class="font-bold text-lg mb-2">ওয়েব ভিজিট</p>
-                    <button class="task-button" onclick="handleTask('webvisit')">খুলুন</button>
-                </div>
-                <div class="task-card flex flex-col items-center justify-center text-center">
-                    <i data-lucide="send" class="w-12 h-12 text-[#9B59B6] mb-2"></i>
-                    <p class="font-bold text-lg mb-2">টেলিগ্রাম আয়</p>
-                    <button class="task-button" onclick="handleTask('telegram')">খুলুন</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="withdraw-page" class="user-page">
-            <h2 class="text-3xl font-bold mb-6">Withdraw Coins</h2>
-            <div class="card-bg p-6 rounded-2xl">
-                <p id="min-withdrawal-text" class="text-center text-gray-400 mb-4"></p>
-                <label for="withdrawal-method" class="block text-sm font-medium mb-2">Withdrawal Method</label>
-                <select id="withdrawal-method" class="w-full p-3 rounded-lg input-field mb-4"></select>
-                <label for="withdrawal-amount" class="block text-sm font-medium mb-2">Amount (Coins)</label>
-                <input id="withdrawal-amount" type="number" placeholder="Enter amount" class="w-full p-3 rounded-lg input-field mb-4">
-                <label for="payment-detail" class="block text-sm font-medium mb-2">Payment Detail (e.g. Phone Number)</label>
-                <input id="payment-detail" type="text" placeholder="Enter payment detail" class="w-full p-3 rounded-lg input-field mb-4">
-                <button id="withdraw-btn" class="w-full p-3 rounded-lg btn-accent">Request Withdrawal</button>
-            </div>
-        </div>
-
-        <div id="refer-page" class="user-page">
-            <h2 class="text-3xl font-bold mb-6">Refer & Earn</h2>
-            <div class="card-bg p-6 rounded-2xl text-center">
-                <p class="text-gray-400 mb-4">Share your referral code to invite friends and earn coins.</p>
-                <p id="referral-code" class="text-4xl font-bold text-accent mb-4"></p>
-                <button id="copy-referral-btn" class="btn-accent px-6 py-2 rounded-xl">Copy Code</button>
-            </div>
-        </div>
-
-        <div id="history-page" class="user-page">
-            <h2 class="text-3xl font-bold mb-6">Transaction History</h2>
-            <div id="history-list" class="space-y-4"></div>
-        </div>
-
-        <div id="notifications-page" class="user-page">
-            <h2 class="text-3xl font-bold mb-6">Notifications</h2>
-            <div id="notifications-list" class="space-y-4">
-                <p class="text-gray-400 text-center">No new notifications.</p>
-            </div>
-        </div>
-
-        <div id="settings-page" class="user-page">
-            <h2 class="text-3xl font-bold mb-6">Settings</h2>
-            <div class="card-bg p-6 rounded-2xl">
-                <h3 class="text-xl font-bold mb-4">Update Profile</h3>
-                
-                <div class="flex flex-col items-center mb-6">
-                    <img id="settings-profile-pic-preview" src="https://via.placeholder.com/80/4A90E2/FFFFFF?text=P" alt="Profile" class="rounded-full w-24 h-24 mb-4 border-4 border-accent">
-                    <input type="file" id="profile-pic-upload" class="text-sm text-gray-400">
-                </div>
-                
-                <label for="new-name" class="block text-gray-400 mb-2">Your Name</label>
-                <input id="new-name" type="text" placeholder="Enter new name" class="w-full p-3 rounded-lg input-field mb-4">
-                
-                <button id="save-profile-btn" class="w-full p-4 rounded-xl btn-accent">Save Changes</button>
-            </div>
-            <button id="user-logout-btn" class="w-full p-4 mt-4 rounded-xl btn-outline-accent">Logout</button>
-        </div>
-
-    </main>
-    
-    <nav class="bottom-nav">
-        <a href="#" class="nav-item active" data-page="home-page">
-            <i data-lucide="home"></i>
-            <span>Home</span>
-        </a>
-        <a href="#" class="nav-item" data-page="tasks-page">
-            <i data-lucide="list-checks"></i>
-            <span>Tasks</span>
-        </a>
-        <a href="#" class="nav-item" data-page="withdraw-page">
-            <i data-lucide="briefcase"></i>
-            <span>Wallet</span>
-        </a>
-        <a href="#" class="nav-item" data-page="notifications-page">
-            <i data-lucide="megaphone"></i>
-            <span>Alert</span>
-        </a>
-        <a href="#" class="nav-item" data-page="refer-page">
-            <i data-lucide="user-square"></i>
-            <span>Refer</span>
-        </a>
-        <a href="#" class="nav-item" data-page="settings-page">
-            <i data-lucide="settings"></i>
-            <span>Settings</span>
-        </a>
-    </nav>
-</div>
-
-<div id="custom-alert" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-    <div class="bg-gray-800 rounded-xl p-6 w-full max-w-sm text-center shadow-lg border border-gray-700">
-        <p id="alert-message" class="mb-4 text-white font-medium"></p>
-        <button id="alert-ok-btn" class="btn-accent px-6 py-2 rounded-lg">OK</button>
+    <div id="registerForm" class="hidden space-y-4">
+      <input id="regName" type="text" placeholder="Full Name" class="input w-full">
+      <input id="regEmail" type="email" placeholder="Email" class="input w-full">
+      <input id="regPass" type="password" placeholder="Password" class="input w-full">
+      <input id="regRef" type="text" placeholder="Referral Code (Optional)" class="input w-full">
+      <button id="registerBtn" class="btn btn-accent w-full">Create Account</button>
+      <button id="toLogin" class="btn btn-outline w-full">Already have an account? Login</button>
     </div>
+  </div>
+</section>
+
+<section id="app" class="hidden min-h-screen flex flex-col">
+  <header class="p-4 bg-[#141414] border-b border-[#262626] flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <i data-lucide="badge-dollar-sign" class="w-6 h-6"></i>
+      <div>
+        <p id="userName" class="font-semibold leading-5">User</p>
+        <p id="userEmail" class="text-xs text-gray-400 leading-3"></p>
+      </div>
+    </div>
+    <button id="logoutBtn" class="text-red-400 text-sm">Logout</button>
+  </header>
+
+  <main class="p-4 pb-24 space-y-6">
+
+    <div id="home" class="page active">
+      <div class="card p-5">
+        <p class="text-gray-400">Current Balance</p>
+        <p class="text-4xl font-extrabold mt-1">৳<span id="balance">0.00</span></p>
+        <p class="text-sm text-gray-500 mt-1">Earning per ad: ৳<span id="perAd">0.00</span></p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div class="card p-5 text-center">
+          <i data-lucide="play" class="w-10 h-10 mx-auto mb-2"></i>
+          <p class="font-semibold mb-3">Watch Ads</p>
+          <button id="watchAdBtn" class="btn btn-accent w-full">Watch & Earn</button>
+          <p id="adsToday" class="text-xs text-gray-400 mt-2"></p>
+        </div>
+
+        <div class="card p-5 text-center">
+          <i data-lucide="gift" class="w-10 h-10 mx-auto mb-2"></i>
+          <p class="font-semibold mb-3">Daily Bonus</p>
+          <button id="dailyBonusBtn" class="btn btn-outline w-full">Claim Bonus</button>
+          <p id="bonusNote" class="text-xs text-gray-400 mt-2"></p>
+        </div>
+      </div>
+    </div>
+
+    <div id="tasks" class="page">
+      <h3 class="text-xl font-bold mb-3">Other Tasks</h3>
+      <div class="card p-5">
+        <div class="flex items-center gap-3">
+          <i data-lucide="globe" class="w-6 h-6 text-emerald-400"></i>
+          <div class="flex-1">
+            <p class="font-semibold">Web Visit</p>
+            <p class="text-sm text-gray-400">Coming soon</p>
+          </div>
+          <button class="btn btn-accent px-4 py-2" disabled>Open</button>
+        </div>
+      </div>
+      <div class="card p-5 mt-4">
+        <div class="flex items-center gap-3">
+          <i data-lucide="send" class="w-6 h-6 text-fuchsia-400"></i>
+          <div class="flex-1">
+            <p class="font-semibold">Telegram Income</p>
+            <p class="text-sm text-gray-400">Coming soon</p>
+          </div>
+          <button class="btn btn-accent px-4 py-2" disabled>Open</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="withdraw" class="page">
+      <h3 class="text-xl font-bold mb-3">Withdraw Coins</h3>
+      <div class="card p-5 space-y-4">
+        <p id="minWText" class="text-center text-gray-400"></p>
+        <div>
+          <label class="text-sm text-gray-400">Method</label>
+          <select id="wMethod" class="input w-full mt-1"></select>
+        </div>
+        <div>
+          <label class="text-sm text-gray-400">Amount (Coins)</label>
+          <input id="wAmount" type="number" placeholder="Enter amount" class="input w-full mt-1">
+        </div>
+        <div>
+          <label class="text-sm text-gray-400">Payment Detail (e.g., Phone Number)</label>
+          <input id="wDetail" type="text" placeholder="Number" class="input w-full mt-1">
+        </div>
+        <button id="withdrawBtn" class="btn btn-accent w-full">Request Withdrawal</button>
+      </div>
+    </div>
+
+    <div id="refer" class="page">
+      <h3 class="text-xl font-bold mb-3">Refer & Earn</h3>
+      <div class="card p-5 text-center">
+        <p class="text-gray-400 mb-2">Share your code & earn</p>
+        <p id="refCode" class="text-3xl font-bold text-[color:var(--accent)] mb-3"></p>
+        <button id="copyRef" class="btn btn-outline">Copy Code</button>
+      </div>
+    </div>
+
+    <div id="history" class="page">
+      <h3 class="text-xl font-bold mb-3">Transaction History</h3>
+      <div id="historyList" class="space-y-3"></div>
+    </div>
+
+    <div id="notif" class="page">
+      <h3 class="text-xl font-bold mb-3">Notifications</h3>
+      <div id="notifList" class="space-y-3"></div>
+    </div>
+
+    <div id="settings" class="page">
+      <h3 class="text-xl font-bold mb-3">Settings</h3>
+      <div class="card p-5 space-y-4">
+        <div>
+          <label class="text-sm text-gray-400">Display Name</label>
+          <input id="setName" type="text" placeholder="Your name" class="input w-full mt-1">
+        </div>
+        <button id="saveProfile" class="btn btn-accent w-full">Save Changes</button>
+        <button id="logoutBtn2" class="btn btn-outline w-full">Logout</button>
+
+        <div class="grid grid-cols-2 gap-4 pt-4">
+          <div class="card p-4 text-center">
+            <p class="text-2xl font-bold text-[color:var(--accent)]" id="statRef">0</p>
+            <p class="text-sm text-gray-400">Total Referrals</p>
+          </div>
+          <div class="card p-4 text-center">
+            <p class="text-2xl font-bold text-[color:var(--accent)]" id="statWd">0</p>
+            <p class="text-sm text-gray-400">Total Withdrawals</p>
+          </div>
+          <div class="card p-4 text-center">
+            <p class="text-2xl font-bold text-[color:var(--accent)]" id="statTasks">0</p>
+            <p class="text-sm text-gray-400">Total Tasks</p>
+          </div>
+          <div class="card p-4 text-center">
+            <p class="text-2xl font-bold text-[color:var(--accent)]" id="statAds">0</p>
+            <p class="text-sm text-gray-400">Total Ads</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <nav class="nav">
+    <a data-page="home" class="active"><i data-lucide="home" class="w-6 h-6"></i><span>Home</span></a>
+    <a data-page="tasks"><i data-lucide="list-checks" class="w-6 h-6"></i><span>Tasks</span></a>
+    <a data-page="withdraw"><i data-lucide="briefcase" class="w-6 h-6"></i><span>Wallet</span></a>
+    <a data-page="notif"><i data-lucide="megaphone" class="w-6 h-6"></i><span>Alert</span></a>
+    <a data-page="refer"><i data-lucide="user-plus" class="w-6 h-6"></i><span>Refer</span></a>
+    <a data-page="history"><i data-lucide="clock" class="w-6 h-6"></i><span>History</span></a>
+    <a data-page="settings"><i data-lucide="settings" class="w-6 h-6"></i><span>Settings</span></a>
+  </nav>
+</section>
+
+<div id="alert" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+  <div class="card w-full max-w-sm p-5 text-center">
+    <p id="alertMsg" class="mb-4"></p>
+    <button id="alertOk" class="btn btn-accent">OK</button>
+  </div>
 </div>
 
 <script type="module">
-    // Firebase Configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyAuRjoQd88a3sRaU-mZyogapNCjgDbc4R8",
-      authDomain: "hridoy-skill-1.firebaseapp.com",
-      databaseURL: "https://hridoy-skill-1-default-rtdb.firebaseio.com",
-      projectId: "hridoy-skill-1",
-      storageBucket: "hridoy-skill-1.firebasestorage.app",
-      messagingSenderId: "840073498608",
-      appId: "1:840073498608:web:4741e43ca186e027a95735",
-      measurementId: "G-YG5H5ZFBR8"
-    };
+  // SECURITY REMINDER: Protect your Firestore rules!
+  const firebaseConfig = {
+    apiKey: "AIzaSyAuRjoQd88a3sRaU-mZyogapNCjgDbc4R8",
+    authDomain: "hridoy-skill-1.firebaseapp.com",
+    databaseURL: "https://hridoy-skill-1-default-rtdb.firebaseio.com",
+    projectId: "hridoy-skill-1",
+    storageBucket: "hridoy-skill-1.firebasestorage.app",
+    messagingSenderId: "840073498608",
+    appId: "1:840073498608:web:4741e43ca186e027a95735",
+    measurementId: "G-YG5H5ZFBR8"
+  };
 
-    // Firebase Imports - Updated to latest modular SDK
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, where, serverTimestamp, addDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-storage.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, where, serverTimestamp, addDoc, limit, runTransaction } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-    let userData = null;
-    let appConfig = null;
-    const today = new Date().toISOString().slice(0, 10);
-    const DEFAULT_PIC_URL = "https://via.placeholder.com/40/4A90E2/FFFFFF?text=P";
+  // State
+  let user = null;
+  let userData = null;
+  let appConfig = null;
+  const today = () => new Date().toISOString().slice(0,10);
 
-    // DOM Elements
-    const loader = document.getElementById('loader');
-    const loginSection = document.getElementById('login-section');
-    const userPanelContainer = document.getElementById('user-panel-container');
-    const userBalanceEl = document.getElementById('user-balance');
-    const adEarningDisplayEl = document.getElementById('ad-earning-display');
-    const referralCodeEl = document.getElementById('referral-code');
-    const historyListEl = document.getElementById('history-list');
-    const withdrawalMethodSelect = document.getElementById('withdrawal-method');
-    const minWithdrawalTextEl = document.getElementById('min-withdrawal-text');
-    const mainHeader = document.getElementById('main-header');
-    const notificationsListEl = document.getElementById('notifications-list');
+  // UI helpers
+  const $ = (id)=>document.getElementById(id);
+  const show = (el)=>el.classList.remove("hidden");
+  const hide = (el)=>el.classList.add("hidden");
+  const showLoader=()=>show($("loader"));
+  const hideLoader=()=>hide($("loader"));
+  const alertBox = $("alert"); const alertMsg=$("alertMsg");
+  $("alertOk").onclick = ()=>hide(alertBox);
+  const notify = (msg)=>{ alertMsg.textContent=msg; show(alertBox); };
 
-    // Login/Register Form Elements
-    const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
-    const formHeadingText = document.getElementById('form-heading-text');
+  // Nav
+  document.querySelectorAll(".nav a").forEach(a=>{
+    a.addEventListener("click",(e)=>{
+      e.preventDefault();
+      const page = a.dataset.page;
+      document.querySelectorAll(".nav a").forEach(n=>n.classList.remove("active"));
+      a.classList.add("active");
+      document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+      $(page).classList.add("active");
+      if(page==="history") loadHistory();
+      if(page==="notif") loadNotifications();
+      if(page==="settings") { $("setName").value = userData?.name || ""; }
+    });
+  });
 
-    // Profile & Settings Elements
-    const userNameDisplayEl = document.getElementById('user-name-display');
-    const profilePicDisplayEl = document.getElementById('profile-pic-display');
-    const settingsProfilePicPreviewEl = document.getElementById('settings-profile-pic-preview');
-    const profilePicUploadInput = document.getElementById('profile-pic-upload');
-    const newNameInput = document.getElementById('new-name');
-    const saveProfileBtn = document.getElementById('save-profile-btn');
-    const userLogoutBtn = document.getElementById('user-logout-btn');
+  // Icons
+  window.onload = ()=>{ if(window.lucide){ window.lucide.createIcons(); } };
 
-    // On Load & Auth State Change
-    window.onload = () => {
-        lucide.createIcons();
-        setupEventListeners();
-        onAuthStateChanged(auth, handleAuthStateChange);
-    };
-
-    async function handleAuthStateChange(user) {
-        if (user) {
-            loader.style.display = 'flex';
-            try {
-                const userDocRef = doc(db, "users", user.uid);
-                const userDoc = await getDoc(userDocRef);
-
-                if (userDoc.exists()) {
-                    userData = userDoc.data();
-                    const configDocRef = doc(db, "config", "main");
-                    const configDoc = await getDoc(configDocRef);
-                    appConfig = configDoc.exists() ? configDoc.data() : null;
-
-                    if (userData.isBlocked) {
-                        showAlert("Your account has been blocked.");
-                        await signOut(auth);
-                        return;
-                    }
-
-                    loginSection.classList.add('hidden');
-                    userPanelContainer.classList.remove('hidden');
-                    mainHeader.classList.remove('hidden');
-                    updateUI();
-                    loadHistory();
-                    loadWithdrawalMethods();
-                    loadNotifications();
-                } else {
-                    showAlert("User data not found. Please try logging in again.");
-                    await signOut(auth);
-                }
-            } catch (error) {
-                console.error("Error loading user data:", error);
-                showAlert("Error loading user data.");
-            } finally {
-                loader.style.display = 'none';
-            }
-        } else {
-            loginSection.classList.remove('hidden');
-            userPanelContainer.classList.add('hidden');
-        }
+  // Auth state
+  onAuthStateChanged(auth, async (u)=>{
+    if(u){
+      user=u;
+      hide($("auth"));
+      show($("app"));
+      await bootstrap();
+    }else{
+      user=null; userData=null;
+      show($("auth"));
+      hide($("app"));
     }
+  });
 
-    // Auth Functions
-    async function handleLogin() {
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
-        if (!email || !password) {
-            return showAlert("Please enter both email and password.");
-        }
-        loader.style.display = 'flex';
-        try {
-            await signInWithEmailAndPassword(auth, email, password);
-        } catch (error) {
-            showAlert("Login failed: " + error.message);
-        } finally {
-            loader.style.display = 'none';
-        }
-    }
+  // Bootstrap user + config
+  async function bootstrap(){
+    try{
+      showLoader();
+      // Load config
+      const cRef = doc(db,"config","main");
+      const cSnap = await getDoc(cRef);
+      appConfig = cSnap.exists() ? cSnap.data() : { dailyAdLimit:0, minWithdrawal:0, paymentMethods:[], rewards:{monetag:0,dailyBonus:0,referral:0} };
 
-    async function handleRegister() {
-        const name = document.getElementById('register-name').value.trim();
-        const email = document.getElementById('register-email').value.trim();
-        const password = document.getElementById('register-password').value;
-
-        if (!name || !email || !password) {
-            return showAlert("Please fill in all fields (Full Name, Email, Password).");
-        }
-        loader.style.display = 'flex';
-        try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-            await setDoc(doc(db, "users", user.uid), {
-                uid: user.uid,
-                email: email,
-                name: name,
-                balance: 0,
-                dailyAdCount: 0,
-                lastAdWatchDate: '',
-                isBlocked: false,
-                profilePicUrl: DEFAULT_PIC_URL,
-                createdAt: serverTimestamp()
-            });
-            showAlert("Registration successful! Welcome.");
-        } catch (error) {
-            showAlert("Registration failed: " + error.message);
-        } finally {
-            loader.style.display = 'none';
-        }
-    }
-
-    async function handleLogout() {
-        await signOut(auth);
-    }
-
-    // UI Updates
-    function updateUI() {
-        if (!userData || !appConfig) return;
-
-        userBalanceEl.textContent = `৳${(userData.balance || 0).toFixed(2)}`;
-        adEarningDisplayEl.textContent = (appConfig.rewards.monetag || 0).toFixed(2);
-        
-        // Display a shortened version of the UID for the referral code
-        referralCodeEl.textContent = userData.uid.slice(0, 10);
-        minWithdrawalTextEl.textContent = `Minimum withdrawal amount: ${appConfig.minWithdrawal || 0} coins`;
-
-        userNameDisplayEl.textContent = userData.name || 'User';
-        const profilePicUrl = userData.profilePicUrl || DEFAULT_PIC_URL;
-        profilePicDisplayEl.src = profilePicUrl;
-        settingsProfilePicPreviewEl.src = profilePicUrl;
-        newNameInput.value = userData.name;
-    }
-
-    // Tasks & Ads (Corrected Logic)
-    async function handleTask(taskType) {
-        if (!userData || !appConfig) {
-            return showAlert("Task not available. Please try again later.");
-        }
-        
-        loader.style.display = 'flex';
-        
-        try {
-            if (taskType === 'monitag') {
-                const dailyLimit = appConfig.dailyAdLimit || 0;
-                const currentCount = userData.lastAdWatchDate === today ? userData.dailyAdCount : 0;
-                
-                if (currentCount >= dailyLimit) {
-                    loader.style.display = 'none';
-                    return showAlert("আপনার দৈনিক বিজ্ঞাপনের সীমা শেষ হয়েছে। আগামীকাল আবার চেষ্টা করুন।");
-                }
-                
-                if (typeof window.show_9572158 === 'function') {
-                    // This function call triggers the Monetag ad.
-                    // The reward granting logic will be handled inside a callback if needed, but
-                    // for now, we'll assume the ad displays and then update the balance.
-                    await window.show_9572158(); // In a real app, this should be awaited properly if possible.
-
-                    const rewardAmount = appConfig.rewards.monetag || 0;
-                    const userRef = doc(db, "users", userData.uid);
-                    
-                    const newAdCount = currentCount + 1;
-                    
-                    await updateDoc(userRef, { 
-                        balance: (userData.balance || 0) + rewardAmount,
-                        dailyAdCount: newAdCount,
-                        lastAdWatchDate: today
-                    });
-
-                    userData.balance += rewardAmount;
-                    userData.dailyAdCount = newAdCount;
-                    userData.lastAdWatchDate = today;
-
-                    updateUI();
-                    showAlert(`অভিনন্দন! আপনি ৳${rewardAmount} জিতেছেন।`);
-                } else {
-                    showAlert('বিজ্ঞাপন লোড হতে ব্যর্থ। কিছুক্ষণ পর আবার চেষ্টা করুন।');
-                }
-            } else if (taskType === 'gigapub') {
-                showAlert('Gigapub আয় এখনো সক্রিয় করা হয়নি।');
-            } else if (taskType === 'webvisit') {
-                showAlert('ওয়েব ভিজিট শীঘ্রই আসছে।');
-            } else if (taskType === 'telegram') {
-                showAlert('টেলিগ্রাম টাস্ক শীঘ্রই আসছে।');
-            } else {
-                showAlert('Unknown task type.');
-            }
-        } catch(e) {
-            console.error("Ad or database update error:", e);
-            showAlert('বিজ্ঞাপন দেখানো সম্ভব হয়নি অথবা ব্যালেন্স আপডেট করা সম্ভব হয়নি।');
-        } finally {
-            loader.style.display = 'none';
-        }
-    }
-    
-    // Profile Update
-    async function handleProfileUpdate() {
-        const newName = newNameInput.value.trim();
-        const file = profilePicUploadInput.files[0];
-        
-        if (!newName && !file) {
-            return showAlert("Please enter a new name or select a new profile picture.");
-        }
-        
-        loader.style.display = 'flex';
-        
-        try {
-            let profilePicUrl = userData.profilePicUrl || DEFAULT_PIC_URL;
-            const updates = {};
-            
-            if (newName && newName !== userData.name) {
-                updates.name = newName;
-            }
-            
-            if (file) {
-                const storageRef = ref(storage, 'profile_pics/' + auth.currentUser.uid);
-                await uploadBytes(storageRef, file);
-                profilePicUrl = await getDownloadURL(storageRef);
-                updates.profilePicUrl = profilePicUrl;
-            }
-            
-            if (Object.keys(updates).length > 0) {
-                const userRef = doc(db, "users", userData.uid);
-                await updateDoc(userRef, updates);
-                userData = { ...userData, ...updates };
-                updateUI();
-                showAlert("Profile updated successfully!");
-            } else {
-                showAlert("No changes to save.");
-            }
-            
-        } catch (error) {
-            console.error("Error updating profile:", error);
-            showAlert("Failed to update profile. Please try again.");
-        } finally {
-            loader.style.display = 'none';
-        }
-    }
-
-    // Withdrawals
-    async function handleWithdrawal() {
-        const amount = parseFloat(document.getElementById('withdrawal-amount').value);
-        const method = withdrawalMethodSelect.value;
-        const detail = document.getElementById('payment-detail').value;
-
-        if (isNaN(amount) || amount <= 0 || !method || !detail) {
-            return showAlert("Please fill in all withdrawal details correctly.");
-        }
-        if (amount > userData.balance) {
-            return showAlert("You do not have enough coins.");
-        }
-        if (amount < appConfig.minWithdrawal) {
-            return showAlert(`The minimum withdrawal amount is ${appConfig.minWithdrawal} coins.`);
-        }
-
-        loader.style.display = 'flex';
-        try {
-            const userRef = doc(db, "users", userData.uid);
-            await updateDoc(userRef, { balance: userData.balance - amount });
-
-            const withdrawalsRef = collection(db, "withdrawals");
-            await addDoc(withdrawalsRef, {
-                userId: userData.uid,
-                userName: userData.name,
-                userEmail: userData.email,
-                amount: amount,
-                method: method,
-                paymentDetail: detail,
-                status: 'pending',
-                requestedAt: serverTimestamp()
-            });
-
-            userData.balance -= amount;
-            updateUI();
-            showAlert("Withdrawal request submitted successfully!");
-        } catch (error) {
-            console.error("Error submitting withdrawal:", error);
-            showAlert("Failed to submit withdrawal request.");
-        } finally {
-            loader.style.display = 'none';
-        }
-    }
-
-    async function loadWithdrawalMethods() {
-        if (!appConfig || !appConfig.paymentMethods) return;
-        withdrawalMethodSelect.innerHTML = '';
-        appConfig.paymentMethods.forEach(method => {
-            const option = document.createElement('option');
-            option.value = method;
-            option.textContent = method;
-            withdrawalMethodSelect.appendChild(option);
+      // Load user doc
+      const uRef = doc(db,"users", user.uid);
+      const uSnap = await getDoc(uRef);
+      if(!uSnap.exists()){
+        await setDoc(uRef,{
+          uid:user.uid, email:user.email || "",
+          name: user.email?.split("@")[0] || "User",
+          balance:0, dailyAdCount:0, lastAdWatchDate:"",
+          isBlocked:false, totalAdsWatched:0,
+          totalReferrals:0, totalWithdrawals:0,
+          referralCode: user.uid.slice(0,10),
+          lastBonusDate:""
         });
+        userData = (await getDoc(uRef)).data();
+      } else {
+        userData = uSnap.data();
+      }
+
+      if(userData.isBlocked){ notify("Your account has been blocked."); await signOut(auth); return; }
+
+      // UI
+      $("userName").textContent = userData.name || "User";
+      $("userEmail").textContent = userData.email || user.email || "";
+      $("refCode").textContent = userData.referralCode || user.uid.slice(0,10);
+      $("perAd").textContent = (appConfig.rewards?.monetag||0).toFixed(2);
+      $("minWText").textContent = `Minimum withdrawal amount: ${appConfig.minWithdrawal||0} coins`;
+      $("balance").textContent = (userData.balance||0).toFixed(2);
+      $("adsToday").textContent = `Ads today: ${userData.lastAdWatchDate===today()? (userData.dailyAdCount||0):0}/${appConfig.dailyAdLimit||0}`;
+      $("bonusNote").textContent = userData.lastBonusDate===today() ? "Already claimed today" : `Bonus today: ৳${(appConfig.rewards?.dailyBonus||0).toFixed(2)}`;
+
+      // Stats
+      $("statRef").textContent = userData.totalReferrals||0;
+      $("statWd").textContent = userData.totalWithdrawals||0;
+      $("statTasks").textContent = userData.totalAdsWatched||0;
+      $("statAds").textContent = userData.totalAdsWatched||0;
+
+      // Withdraw methods
+      const wSel = $("wMethod"); wSel.innerHTML="";
+      (appConfig.paymentMethods||[]).forEach(m=>{
+        const opt=document.createElement("option"); opt.value=m; opt.textContent=m; wSel.appendChild(opt);
+      });
+    }catch(e){
+      console.error(e); notify("Failed to load data.");
+    }finally{
+      hideLoader();
     }
+  }
 
-    // History
-    async function loadHistory() {
-        if (!userData) return;
-        historyListEl.innerHTML = '<p class="text-gray-400 text-center">Loading history...</p>';
-        try {
-            const q = query(collection(db, "withdrawals"), where("userId", "==", userData.uid), orderBy("requestedAt", "desc"));
-            const querySnapshot = await getDocs(q);
+  // Auth actions
+  $("loginBtn").onclick = async ()=>{
+    const email=$("loginEmail").value.trim();
+    const pass=$("loginPass").value;
+    if(!email||!pass) return notify("Enter email & password");
+    try{ showLoader(); await signInWithEmailAndPassword(auth,email,pass); }
+    catch(e){ notify("Login failed: "+e.message); }
+    finally{ hideLoader(); }
+  };
 
-            if (querySnapshot.empty) {
-                historyListEl.innerHTML = '<p class="text-gray-400 text-center">No withdrawal history found.</p>';
-                return;
-            }
+  $("registerBtn").onclick = async ()=>{
+    const name=$("regName").value.trim();
+    const email=$("regEmail").value.trim();
+    const pass=$("regPass").value;
+    const refCode=$("regRef").value.trim();
+    if(!name||!email||!pass) return notify("Fill all required fields");
+    try{
+      showLoader();
+      const cred = await createUserWithEmailAndPassword(auth,email,pass);
+      const u=cred.user;
+      const referralCode = u.uid.slice(0,10);
 
-            historyListEl.innerHTML = '';
-            querySnapshot.forEach(doc => {
-                const req = doc.data();
-                const date = req.requestedAt ? new Date(req.requestedAt.seconds * 1000).toLocaleString() : 'N/A';
-                const statusColor = req.status === 'pending' ? 'text-yellow-400' : (req.status === 'approved' ? 'text-green-400' : 'text-red-400');
-                historyListEl.innerHTML += `<div class="card-bg p-4 rounded-lg flex items-center justify-between shadow-md">
-                    <div>
-                        <p class="font-bold text-lg">${req.amount} Coins</p>
-                        <p class="text-sm text-gray-400">Via ${req.method}</p>
-                        <p class="text-xs text-gray-500 mt-1">${date}</p>
-                    </div>
-                    <span class="${statusColor} font-semibold capitalize">${req.status}</span>
-                </div>`;
-            });
-        } catch (error) {
-            console.error("Error loading history:", error);
-            historyListEl.innerHTML = '<p class="text-red-400 text-center">Error loading history.</p>';
-        }
+      // Handle referral logic within a transaction to ensure atomicity
+      await runTransaction(db, async (transaction) => {
+          let referrerDocRef = null;
+          let referrerData = null;
+          if (refCode) {
+              const q = query(collection(db, "users"), where("referralCode", "==", refCode), limit(1));
+              const querySnapshot = await getDocs(q);
+              if (!querySnapshot.empty) {
+                  referrerDocRef = querySnapshot.docs[0].ref;
+                  referrerData = querySnapshot.docs[0].data();
+                  // Update referrer's balance and referral count
+                  transaction.update(referrerDocRef, {
+                      balance: (referrerData.balance || 0) + (appConfig.rewards?.referral || 0),
+                      totalReferrals: (referrerData.totalReferrals || 0) + 1
+                  });
+              }
+          }
+
+          // Create new user document
+          transaction.set(doc(db, "users", u.uid), {
+              uid: u.uid,
+              email,
+              name,
+              balance: (refCode && referrerData) ? (appConfig.rewards?.referral || 0) : 0, // Reward new user if referred
+              dailyAdCount: 0,
+              lastAdWatchDate: "",
+              isBlocked: false,
+              totalAdsWatched: 0,
+              referredBy: refCode || null,
+              createdAt: serverTimestamp(),
+              totalReferrals: 0,
+              totalWithdrawals: 0,
+              referralCode
+          });
+      });
+
+      notify("Registration successful! Referral bonus applied.");
+    } catch(e) {
+      notify("Registration failed: " + e.message);
+    } finally {
+      hideLoader();
     }
+  };
 
-    // Notifications
-    async function loadNotifications() {
-        if (!userData) return;
-        notificationsListEl.innerHTML = '<p class="text-gray-400 text-center">Loading notifications...</p>';
-        try {
-            const q = query(collection(db, "notifications"), orderBy("createdAt", "desc"));
-            const querySnapshot = await getDocs(q);
+  $("toRegister").onclick = ()=>{
+    $("loginForm").classList.add("hidden");
+    $("registerForm").classList.remove("hidden");
+    $("authTitle").textContent="Create a new account";
+  };
+  $("toLogin").onclick = ()=>{
+    $("registerForm").classList.add("hidden");
+    $("loginForm").classList.remove("hidden");
+    $("authTitle").textContent="Login to your account";
+  };
 
-            if (querySnapshot.empty) {
-                notificationsListEl.innerHTML = '<p class="text-gray-400 text-center">No new notifications.</p>';
-                return;
-            }
+  // Profile save
+  $("saveProfile").onclick = async ()=>{
+    const newName=$("setName").value.trim();
+    if(!newName) return notify("Enter a name");
+    try{
+      showLoader();
+      await updateDoc(doc(db,"users",user.uid),{ name:newName });
+      userData.name=newName;
+      $("userName").textContent=newName;
+      notify("Profile updated");
+    }catch(e){ notify("Update failed"); }
+    finally{ hideLoader(); }
+  };
 
-            notificationsListEl.innerHTML = '';
-            querySnapshot.forEach(doc => {
-                const notification = doc.data();
-                const date = notification.createdAt ? new Date(notification.createdAt.seconds * 1000).toLocaleString() : 'N/A';
-                notificationsListEl.innerHTML += `<div class="card-bg p-4 rounded-lg shadow-md">
-                    <p class="font-bold text-lg mb-1">${notification.title}</p>
-                    <p class="text-gray-300 text-sm mb-2">${notification.message}</p>
-                    <p class="text-xs text-gray-500">${date}</p>
-                </div>`;
-            });
-        } catch (error) {
-            console.error("Error loading notifications:", error);
-            notificationsListEl.innerHTML = '<p class="text-red-400 text-center">Error loading notifications.</p>';
-        }
+  // Logout
+  $("logoutBtn").onclick = ()=>signOut(auth);
+  $("logoutBtn2").onclick = ()=>signOut(auth);
+
+  // Copy referral
+  $("copyRef").onclick = ()=>{
+    navigator.clipboard.writeText($("refCode").textContent);
+    notify("Referral code copied!");
+  };
+
+  // Watch Ad + reward
+  $("watchAdBtn").onclick = async ()=>{
+    if(!appConfig) return notify("Config not loaded yet");
+    const limit = appConfig.dailyAdLimit||0;
+    const countToday = (userData.lastAdWatchDate===today()) ? (userData.dailyAdCount||0) : 0;
+    if(countToday>=limit) return notify("You reached daily ad limit. Try tomorrow.");
+
+    if(typeof window.show_9476147!=="function") return notify("Ad is loading, try again in a moment.");
+
+    notify("Loading ad, please wait...");
+    hide($("alert"));
+
+    try{
+      await window.show_9476147({ type:"rewarded-interstitial" });
+      const reward = appConfig.rewards?.monetag||0;
+      const uRef = doc(db,"users",user.uid);
+      const newCount = countToday+1;
+
+      await updateDoc(uRef,{
+        balance:(userData.balance||0)+reward,
+        dailyAdCount:newCount,
+        lastAdWatchDate:today(),
+        totalAdsWatched:(userData.totalAdsWatched||0)+1
+      });
+
+      // log transaction
+      await addDoc(collection(db,"transactions"),{
+        userId:user.uid,type:"ad_reward", amount:reward, createdAt:serverTimestamp()
+      });
+
+      // local state update
+      userData.balance += reward;
+      userData.dailyAdCount = newCount;
+      userData.lastAdWatchDate = today();
+      userData.totalAdsWatched = (userData.totalAdsWatched||0)+1;
+
+      // UI
+      $("balance").textContent = (userData.balance||0).toFixed(2);
+      $("adsToday").textContent = `Ads today: ${newCount}/${limit}`;
+      $("statAds").textContent = userData.totalAdsWatched||0;
+      $("statTasks").textContent = userData.totalAdsWatched||0;
+
+      notify(`🎉 You earned ৳${reward.toFixed(2)}`);
+    }catch(e){
+      console.warn("Ad canceled/failed", e);
+      notify("Ad failed or skipped.");
     }
-    
-    // Navigation & UI
-    function navigateTo(pageId) {
-        document.querySelectorAll('.user-page').forEach(p => p.classList.remove('active'));
-        document.getElementById(pageId).classList.add('active');
-        
-        document.querySelectorAll('.bottom-nav .nav-item').forEach(link => {
-            link.classList.remove('active');
-            if (link.dataset.page === pageId) link.classList.add('active');
+  };
+
+  // Daily bonus
+  $("dailyBonusBtn").onclick = async ()=>{
+    if(!appConfig) return notify("Config not loaded yet");
+    const already = userData.lastBonusDate===today();
+    if(already) return notify("Already claimed today.");
+    const bonus = appConfig.rewards?.dailyBonus||0;
+    try{
+      showLoader();
+      await updateDoc(doc(db,"users",user.uid),{
+        balance:(userData.balance||0)+bonus,
+        lastBonusDate:today()
+      });
+      await addDoc(collection(db,"transactions"),{
+        userId:user.uid, type:"daily_bonus", amount:bonus, createdAt:serverTimestamp()
+      });
+      userData.balance += bonus;
+      userData.lastBonusDate = today();
+      $("balance").textContent=(userData.balance||0).toFixed(2);
+      $("bonusNote").textContent="Already claimed today";
+      notify(`✅ Daily bonus added: ৳${bonus.toFixed(2)}`);
+    }catch(e){ notify("Bonus failed. Try again."); }
+    finally{ hideLoader(); }
+  };
+
+  // Withdraw
+  $("withdrawBtn").onclick = async ()=>{
+    const amount = parseFloat($("wAmount").value);
+    const method = $("wMethod").value;
+    const detail = $("wDetail").value.trim();
+    if(isNaN(amount)||amount<=0||!method||!detail) return notify("Fill all withdraw fields correctly.");
+    if(amount > (userData.balance||0)) return notify("Not enough coins.");
+    if(amount < (appConfig.minWithdrawal||0)) return notify(`Minimum withdrawal is ${appConfig.minWithdrawal} coins.`);
+
+    try{
+      showLoader();
+      // Deduct
+      await updateDoc(doc(db,"users",user.uid),{
+        balance:(userData.balance||0)-amount,
+        totalWithdrawals:(userData.totalWithdrawals||0)+1
+      });
+      // Log withdrawal request
+      await addDoc(collection(db,"withdrawals"),{
+        userId:user.uid, userName:userData.name, userEmail:userData.email,
+        amount, method, paymentDetail:detail, status:"pending", requestedAt:serverTimestamp()
+      });
+      // Transactions feed
+      await addDoc(collection(db,"transactions"),{
+        userId:user.uid,type:"withdraw_request",amount:-amount,method,createdAt:serverTimestamp()
+      });
+
+      // Local + UI
+      userData.balance -= amount;
+      userData.totalWithdrawals = (userData.totalWithdrawals||0)+1;
+      $("balance").textContent=(userData.balance||0).toFixed(2);
+      $("statWd").textContent=userData.totalWithdrawals||0;
+      $("wAmount").value=""; $("wDetail").value="";
+      notify("Withdrawal request submitted ✅");
+    }catch(e){
+      console.error(e); notify("Failed to submit withdrawal.");
+    }finally{
+      hideLoader();
+    }
+  };
+
+  // History (merged: transactions + withdrawals)
+  async function loadHistory(){
+    const list = $("historyList");
+    list.innerHTML = `<div class="text-center text-gray-400">Loading...</div>`;
+    try{
+      const txQ = query(collection(db,"transactions"), where("userId","==",user.uid), orderBy("createdAt","desc"), limit(50));
+      const txSnap = await getDocs(txQ);
+
+      const wdQ = query(collection(db,"withdrawals"), where("userId","==",user.uid), orderBy("requestedAt","desc"), limit(50));
+      const wdSnap = await getDocs(wdQ);
+
+      const items = [];
+
+      txSnap.forEach(d=>{
+        const x=d.data();
+        items.push({
+          t: x.createdAt?.seconds ? new Date(x.createdAt.seconds*1000) : new Date(),
+          title: x.type==="ad_reward" ? "Ad Reward" : (x.type==="daily_bonus" ? "Daily Bonus" : "Withdraw Request"),
+          subtitle: x.method ? `Method: ${x.method}` : "",
+          amount: x.amount
         });
-        
-        if (pageId === 'history-page') loadHistory();
-        if (pageId === 'notifications-page') loadNotifications();
-        if (pageId === 'settings-page') {
-            newNameInput.value = userData.name || '';
-            settingsProfilePicPreviewEl.src = userData.profilePicUrl || DEFAULT_PIC_URL;
-            profilePicUploadInput.value = '';
-        }
-    }
+      });
 
-    function toggleForms(isRegister) {
-        if (isRegister) {
-            loginForm.classList.add('hidden');
-            registerForm.classList.remove('hidden');
-            formHeadingText.textContent = "Create a new account";
-        } else {
-            loginForm.classList.remove('hidden');
-            registerForm.classList.add('hidden');
-            formHeadingText.textContent = "Login to your account";
-        }
-    }
+      wdSnap.forEach(d=>{
+        const x=d.data();
+        items.push({
+          t: x.requestedAt?.seconds ? new Date(x.requestedAt.seconds*1000) : new Date(),
+          title: `Withdrawal ${x.status?.toUpperCase()||""}`,
+          subtitle: `${x.method} • ${x.paymentDetail||""}`,
+          amount: -Math.abs(x.amount||0)
+        });
+      });
 
-    function setupEventListeners() {
-        document.getElementById('login-btn').addEventListener('click', handleLogin);
-        document.getElementById('register-btn').addEventListener('click', handleRegister);
-        document.getElementById('toggle-register-btn').addEventListener('click', () => toggleForms(true));
-        document.getElementById('toggle-login-btn').addEventListener('click', () => toggleForms(false));
-        document.getElementById('withdraw-btn').addEventListener('click', handleWithdrawal);
-        document.getElementById('copy-referral-btn').addEventListener('click', () => {
-            navigator.clipboard.writeText(referralCodeEl.textContent);
-            showAlert("Referral code copied to clipboard!");
-        });
-        
-        document.querySelectorAll('.bottom-nav .nav-item').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                navigateTo(e.currentTarget.dataset.page);
-            });
-        });
-        
-        saveProfileBtn.addEventListener('click', handleProfileUpdate);
-        userLogoutBtn.addEventListener('click', handleLogout);
-        
-        profilePicUploadInput.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    settingsProfilePicPreviewEl.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+      items.sort((a,b)=>b.t-a.t);
+
+      if(items.length===0){
+        list.innerHTML = `<div class="text-center text-gray-400">No history found.</div>`;
+        return;
+      }
+
+      list.innerHTML = "";
+      items.forEach(it=>{
+        const color = it.amount>=0 ? "text-emerald-400" : "text-rose-400";
+        const sign = it.amount>=0 ? "+" : "";
+        const div = document.createElement("div");
+        div.className="card p-4 flex items-center justify-between";
+        div.innerHTML = `
+          <div>
+            <p class="font-semibold">${it.title}</p>
+            <p class="text-xs text-gray-400">${it.subtitle||""}</p>
+            <p class="text-[11px] text-gray-500 mt-1">${it.t.toLocaleString()}</p>
+          </div>
+          <div class="text-right">
+            <p class="font-bold ${color}">${sign}${it.amount.toFixed(2)}</p>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }catch(e){
+      console.error(e);
+      list.innerHTML = `<div class="text-center text-rose-400">Failed to load history.</div>`;
     }
-    
-    // Utility Alert
-    function showAlert(message) {
-        document.getElementById('alert-message').textContent = message;
-        document.getElementById('custom-alert').classList.remove('hidden');
-        document.getElementById('alert-ok-btn').onclick = () => {
-            document.getElementById('custom-alert').classList.add('hidden');
-        };
+  }
+
+  // Notifications
+  async function loadNotifications(){
+    const list = $("notifList");
+    list.innerHTML = `<div class="text-center text-gray-400">Loading...</div>`;
+    try{
+      const qy = query(collection(db,"notifications"), orderBy("createdAt","desc"), limit(20));
+      const snap = await getDocs(qy);
+      if(snap.empty){
+        list.innerHTML = `<div class="text-center text-gray-400">No new notifications.</div>`;
+        return;
+      }
+      list.innerHTML="";
+      snap.forEach(d=>{
+        const n=d.data();
+        const dt = n.createdAt?.seconds ? new Date(n.createdAt.seconds*1000).toLocaleString() : "N/A";
+        const card = document.createElement("div");
+        card.className="card p-4";
+        card.innerHTML = `
+          <p class="font-semibold mb-1">${n.title||"Notice"}</p>
+          <p class="text-sm text-gray-300">${n.message||""}</p>
+          <p class="text-[11px] text-gray-500 mt-2">${dt}</p>
+        `;
+        list.appendChild(card);
+      });
+    }catch(e){
+      console.error(e);
+      list.innerHTML = `<div class="text-center text-rose-400">Failed to load notifications.</div>`;
     }
-    window.showAlert = showAlert;
+  }
+
+  // Simple text helper
+  const fmt = (n)=> (Number(n)||0).toFixed(2);
 </script>
 </body>
 </html>
